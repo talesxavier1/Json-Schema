@@ -1,4 +1,4 @@
-import { ConfigComponents, HeaderComponents } from "./components.js";
+import { ConfigComponents, HeaderComponents } from "./JSComponents.js";
 
 
 const main = () => {

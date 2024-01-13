@@ -1,6 +1,6 @@
 import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
-import { BaseNodeModel } from "./BaseNodeModel.js"
 import { InstanceProps } from "./InstanceProps.js"
+import { FunctionProps } from "./FunctionProps copy.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
@@ -357,135 +357,140 @@ export class ConfigComponents {
             }).dxList('instance'),
             "tagName": "list_enum_values"
         }));
+        // ==================================================================================================================== //
 
-        // // ==================================================================================================================== //
+        // ===================================================== Functions ==================================================== //
+        this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_array_props
+            "functionDefinition": {
+                setVisible: (value) => {
+                    if (value == true) {
+                        $("#js_dxBox_config_array_props").show();
+                    } else if (value == false) {
+                        $("#js_dxBox_config_array_props").hide();
+                    }
+                },
+                clearFields: () => {
+                    this._componentInstanceModel.clearInstanceValue("select_array_type");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_array_min_max");
+                    this._componentInstanceModel.clearInstanceValue("number_array_min");
+                    this._componentInstanceModel.clearInstanceValue("number_array_max");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_array_unique_items");
+                }
+            },
+            "tagName": "js_dxBox_config_array_props"
+        }));
 
-        // // ===================================================== Functions ==================================================== //
-        // this._componentInstanceModel.functions.js_dxBox_config_array_props = {
-        //     setVisible: (value) => {
-        //         if (value == true) {
-        //             $("#js_dxBox_config_array_props").show();
-        //         } else if (value == false) {
-        //             $("#js_dxBox_config_array_props").hide();
-        //         }
-        //     },
-        //     clearFields: () => {
-        //         this._componentInstanceModel.components.select_array_type.option("value", null);
-        //         this._componentInstanceModel.components.checkbox_array_min_max.option("value", false);
-        //         this._componentInstanceModel.components.number_array_min.option("value", 0);
-        //         this._componentInstanceModel.components.number_array_max.option("value", 0);
-        //         this._componentInstanceModel.components.checkbox_array_unique_items.option("value", false);
-        //     }
-        // };
+        this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_string_props
+            "functionDefinition": {
+                setVisible: (value) => {
+                    if (value == true) {
+                        $("#js_dxBox_config_string_props").show();
+                    } else if (value == false) {
+                        $("#js_dxBox_config_string_props").hide();
+                    }
+                },
+                clearFields: () => {
+                    this._componentInstanceModel.clearInstanceValue("text_string_regular_expression");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_string_regular_expression");
+                }
+            },
+            "tagName": "js_dxBox_config_string_props"
+        }));
 
-        // this._componentInstanceModel.functions.js_dxBox_config_string_props = {
-        //     setVisible: (value) => {
-        //         if (value == true) {
-        //             $("#js_dxBox_config_string_props").show();
-        //         } else if (value == false) {
-        //             $("#js_dxBox_config_string_props").hide();
-        //         }
-        //     },
-        //     clearFields: () => {
-        //         this._componentInstanceModel.components.text_string_regular_expression.option("value", null);
-        //         this._componentInstanceModel.components.checkbox_string_regular_expression.option("value", false);
-        //     }
-        // }
+        this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_numeric_props
+            "functionDefinition": {
+                setVisible: (value) => {
+                    if (value == true) {
+                        $("#js_dxBox_config_numeric_props").show();
+                    } else if (value == false) {
+                        $("#js_dxBox_config_numeric_props").hide();
+                    }
+                },
+                clearFields: () => {
+                    this._componentInstanceModel.clearInstanceValue("checkbox_numeric_range");
+                    this._componentInstanceModel.clearInstanceValue("select_numeric_greater");
+                    this._componentInstanceModel.clearInstanceValue("select_numeric_less");
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_less");
 
-        // this._componentInstanceModel.functions.js_dxBox_config_numeric_props = {
-        //     setVisible: (value) => {
-        //         if (value == true) {
-        //             $("#js_dxBox_config_numeric_props").show();
-        //         } else if (value == false) {
-        //             $("#js_dxBox_config_numeric_props").hide();
-        //         }
-        //     },
-        //     clearFields: () => {
-        //         this._componentInstanceModel.components.checkbox_numeric_range.option("value", false);
+                    this._componentInstanceModel.disableEnableInstance("select_numeric_greater");
+                    this._componentInstanceModel.disableEnableInstance("select_numeric_less");
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_greater");
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_less");
+                }
+            },
+            "tagName": "js_dxBox_config_numeric_props"
+        }));
 
-        //         this._componentInstanceModel.components.select_numeric_greater.option("disabled", true);
-        //         this._componentInstanceModel.components.select_numeric_greater.option("value", null);
-        //         this._componentInstanceModel.components.select_numeric_less.option("disabled", true);
-        //         this._componentInstanceModel.components.select_numeric_less.option("value", null);
-
-        //         this._componentInstanceModel.components.number_numeric_greater.option("disabled", true);
-        //         this._componentInstanceModel.components.number_numeric_greater.option("value", 0);
-        //         this._componentInstanceModel.components.number_numeric_less.option("disabled", true);
-        //         this._componentInstanceModel.components.number_numeric_less.option("value", 0);
-        //     }
-        // }
-
-        // this._componentInstanceModel.functions.js_dxBox_config_enum_props = {
-        //     setVisible: (value) => {
-        //         if (value == true) {
-        //             $("#js_dxBox_config_enum_props").show();
-        //         } else if (value == false) {
-        //             $("#js_dxBox_config_enum_props").hide();
-        //         }
-        //     },
-        //     clearFields: () => {
-        //         this._componentInstanceModel.components.text_enum_add_value.option("value", false);
-        //         this._componentInstanceModel.components.list_enum_values.option("items", []);
-        //     }
-        // }
-        // // ==================================================================================================================== //
+        this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_enum_props
+            "functionDefinition": {
+                setVisible: (value) => {
+                    if (value == true) {
+                        $("#js_dxBox_config_enum_props").show();
+                    } else if (value == false) {
+                        $("#js_dxBox_config_enum_props").hide();
+                    }
+                },
+                clearFields: () => {
+                    this._componentInstanceModel.clearInstanceValue("text_enum_add_value");
+                    this._componentInstanceModel.clearInstanceValue("list_enum_values");
+                }
+            },
+            "tagName": "js_dxBox_config_enum_props"
+        }));
+        // ==================================================================================================================== //
     }
 
 }
 
 export class HeaderComponents {
-    "_componentInstanceModel" = {
-        "components": {},
-        "functions": {}
-    }
-
-    functionBtnSaveClicked;
+    _componentInstanceModel = new ComponentInstanceModel();
 
     constructor() {
-        this._componentInstanceModel.components.text_header_version = (
-            $('#text_header_version').dxTextBox({
-                /* Default Value: '' */
+        this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
+            "componentName": "dxTextBox",
+            "instance": $('#text_header_version').dxTextBox({
                 label: "Versão",
                 labelMode: "static"
-            }).dxTextBox("instance")
-        );
+            }).dxTextBox("instance"),
+            "tagName": "text_header_version"
+        }));
 
-        this._componentInstanceModel.components.text_header_id = (
-            $('#text_header_id').dxTextBox({
-                /* Default Value: '' */
+        this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_id
+            "componentName": "dxTextBox",
+            "instance": $('#text_header_id').dxTextBox({
                 label: "ID",
                 labelMode: "static"
-            }).dxTextBox("instance")
-        );
+            }).dxTextBox("instance"),
+            "tagName": "text_header_id"
+        }));
 
-        this._componentInstanceModel.components.button_header_save_new_version = (
-            $('#button_header_save_new_version').dxButton({
+        this._componentInstanceModel.addInstance(new InstanceProps({ //button_header_save_new_version
+            "componentName": "dxButton",
+            "instance": $('#button_header_save_new_version').dxButton({
                 stylingMode: 'contained',
                 text: 'Salvar em nova versão',
                 type: 'success',
                 onClick: (event) => {
                     this.functionBtnSaveClicked(event)
                 }
-                // onClick(event) {
-                //     this.
-                //     DevExpress.ui.notify('The Contained button was clicked', 'error');
-                // },
-            }).dxButton("instance")
-        );
+            }).dxButton("instance"),
+            "tagName": "button_header_save_new_version"
+        }));
 
-        this._componentInstanceModel.components.button_header_select_version = (
-            $('#button_header_select_version').dxButton({
+        this._componentInstanceModel.addInstance(new InstanceProps({ //button_header_select_version
+            "componentName": "dxButton",
+            "instance": $('#button_header_select_version').dxButton({
                 stylingMode: 'contained',
                 text: 'Selecionar versão',
                 type: 'default',
                 onClick() {
                     DevExpress.ui.notify('The Contained button was clicked');
                 },
-            }).dxButton("instance")
-        );
+            }).dxButton("instance"),
+            "tagName": "button_header_select_version"
+        }));
     }
-
-
 }
 
 

@@ -20,4 +20,22 @@ export class InstanceProps {
         }
         return this._instance.option(this._componentValueField);
     }
+
+    clearInstanceValue = () => {
+        this._instance.option(_componentValueField, _defaultValue);
+    }
+
+    disableEnableInstance = () => {
+        let value = this._instance.option("disabled");
+        this._instance.option("disabled", !value);
+    }
+
+    disableInstance = () => {
+        this._instance.option("disabled", false);
+    }
+
+    enableInstance = () => {
+        this._instance.option("disabled", true);
+    }
+
 }
