@@ -1,0 +1,95 @@
+.component {
+    /* margin-top: 1rem; */
+    margin: .5rem .5rem .5rem .5rem;
+    border-radius: 5px;
+    height: 2.5rem;
+}
+
+.boxshadow {
+    margin: .5rem .5rem .5rem .5rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: .5rem;
+}
+
+#text_header_version,
+#text_header_id {
+    margin: 0 0 0 2rem;
+}
+
+#text_header_version {
+    width: 10rem;
+}
+
+#text_header_id {
+    width: 20rem;
+}
+
+#button_header_save_new_version,
+#button_header_select_version {
+    margin-right: 1.5rem;
+    width: auto;
+}
+
+.dx-checkbox-container {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+}
+
+.dx-checkbox-text {
+    padding: 0;
+    white-space: nowrap;
+}
+
+.js-config-main-props {
+    display: flex;
+    flex-direction: column;
+}
+
+.js-config-main-props-checkboxes {
+    display: flex;
+
+}
+
+.js-config-array-props {
+    display: flex;
+    flex-direction: column;
+}
+
+.js-config-array-props-min-max {
+    display: flex;
+}
+
+.js-config-string-props {
+    display: flex;
+}
+
+#text_string_regular_expression {
+    width: 100%;
+}
+
+.js-config-numeric-props-greater {
+    display: flex;
+}
+
+.js-config-numeric-props-less {
+    display: flex;
+}
+
+.js-config-enum-props {
+    display: flex;
+    flex-direction: column;
+}
+
+.js-config-enum-props-add {
+    display: flex;
+}
+
+#button_enum_add_value {
+    margin: .5rem .5rem .5rem .5rem;
+    background-color: #8bc34a;
+}
+
+#list_enum_values {
+    height: 10rem;
+}
