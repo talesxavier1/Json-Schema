@@ -1,6 +1,6 @@
 import { InstanceProps } from "./InstanceProps.js";
 import { BaseNodeModel } from "./BaseNodeModel.js"
-import { FunctionProps } from "./FunctionProps copy.js";
+import { FunctionProps } from "./FunctionProps.js";
 
 export class ComponentInstanceModel {
     _ARRAY_COMPONENTS_INSTANCES = [];
@@ -27,22 +27,27 @@ export class ComponentInstanceModel {
         return instance.getInstanceValue();
     }
 
+    setInstanceValue = (tagName, value) => {
+        let instance = this.getInstance(tagName);
+        instance.setInstanceValue(value);
+    }
+
     clearInstanceValue = (tagName) => {
         let instance = this.getInstance(tagName);
         instance.clearInstanceValue();
     }
 
-    disableEnableInstance = () => {
+    disableEnableInstance = (tagName, valueParam) => {
         let instance = this.getInstance(tagName);
-        instance.disableEnableInstance();
+        instance.disableEnableInstance(valueParam);
     }
 
-    disableInstance = () => {
+    disableInstance = (tagName) => {
         let instance = this.getInstance(tagName);
         instance.disableInstance();
     }
 
-    enableInstance = () => {
+    enableInstance = (tagName) => {
         let instance = this.getInstance(tagName);
         instance.enableInstance();
     }
@@ -59,7 +64,7 @@ export class ComponentInstanceModel {
         if (!(functionProps instanceof FunctionProps)) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
         }
-        _ARRAY_COMPONENTS_FUNCTIONS.push(functionProps);
+        this._ARRAY_COMPONENTS_FUNCTIONS.push(functionProps);
     }
 
     getFunction = (tagName) => {

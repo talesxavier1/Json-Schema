@@ -1,6 +1,6 @@
 import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
 import { InstanceProps } from "./InstanceProps.js"
-import { FunctionProps } from "./FunctionProps copy.js";
+import { FunctionProps } from "./FunctionProps.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
@@ -13,9 +13,7 @@ export class ConfigComponents {
                 label: "Nome",
                 labelMode: "static",
                 onValueChanged: (event) => {
-                    if (this.componentsChangeEvent.text_name) {
-                        this.componentsChangeEvent.text_name(event.value);
-                    }
+
                 }
             }).dxTextBox("instance"),
             "tagName": "text_name"
@@ -59,17 +57,23 @@ export class ConfigComponents {
                 valueExpr: "ID",
                 displayExpr: "VALUE",
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.functions.js_dxBox_config_array_props.setVisible(event.value == "array");
-                    this._componentInstanceModel.functions.js_dxBox_config_array_props.clearFields();
+                    let functions;
 
-                    this._componentInstanceModel.functions.js_dxBox_config_string_props.setVisible(event.value == "string");
-                    this._componentInstanceModel.functions.js_dxBox_config_string_props.clearFields();
+                    functions = this._componentInstanceModel.getFunction("js_dxBox_config_array_props");
+                    functions.functionDefinition.setVisible(event.value == "array");
+                    functions.functionDefinition.clearFields();
 
-                    this._componentInstanceModel.functions.js_dxBox_config_numeric_props.setVisible(["number", "integer"].includes(event.value));
-                    this._componentInstanceModel.functions.js_dxBox_config_numeric_props.clearFields();
+                    functions = this._componentInstanceModel.getFunction("js_dxBox_config_string_props");
+                    functions.functionDefinition.setVisible(event.value == "string");
+                    functions.functionDefinition.clearFields();
 
-                    this._componentInstanceModel.functions.js_dxBox_config_enum_props.setVisible(event.value == "enum");
-                    this._componentInstanceModel.functions.js_dxBox_config_enum_props.clearFields();
+                    functions = this._componentInstanceModel.getFunction("js_dxBox_config_numeric_props");
+                    functions.functionDefinition.setVisible(["number", "integer"].includes(event.value));
+                    functions.functionDefinition.clearFields();
+
+                    functions = this._componentInstanceModel.getFunction("js_dxBox_config_enum_props");
+                    functions.functionDefinition.setVisible(event.value == "enum");
+                    functions.functionDefinition.clearFields();
                 }
             }).dxSelectBox("instance"),
             "tagName": "select_type"
@@ -145,15 +149,11 @@ export class ConfigComponents {
                 focusStateEnabled: false,
                 iconSize: 20,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.components.number_array_min.option("value", 0);
-                    this._componentInstanceModel.components.number_array_max.option("value", 0);
-                    if (event.value == true) {
-                        this._componentInstanceModel.components.number_array_min.option("disabled", false);
-                        this._componentInstanceModel.components.number_array_max.option("disabled", false);
-                    } else {
-                        this._componentInstanceModel.components.number_array_min.option("disabled", true);
-                        this._componentInstanceModel.components.number_array_max.option("disabled", true);
-                    }
+                    this._componentInstanceModel.setInstanceValue("number_array_max", 0);
+                    this._componentInstanceModel.setInstanceValue("number_array_min", 0);
+
+                    this._componentInstanceModel.disableEnableInstance("number_array_min");
+                    this._componentInstanceModel.disableEnableInstance("number_array_max");
                 }
             }).dxCheckBox("instance"),
             "tagName": "checkbox_array_min_max"
@@ -193,15 +193,12 @@ export class ConfigComponents {
         this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_string_regular_expression
             "componentName": "dxCheckBox",
             "instance": $("#checkbox_string_regular_expression").dxCheckBox({
-                /* Default Value: false */
                 text: 'Expressão regular',
                 focusStateEnabled: false,
                 iconSize: 20,
-                onValueChanged: (event) => {
-                    this._componentInstanceModel.components.text_string_regular_expression.option("disabled", !event.value);
-                    if (!event.value) {
-                        this._componentInstanceModel.components.text_string_regular_expression.option("value", null);
-                    }
+                onValueChanged: () => {
+                    this._componentInstanceModel.disableEnableInstance("text_string_regular_expression");
+                    this._componentInstanceModel.clearInstanceValue("text_string_regular_expression");
                 }
             }).dxCheckBox("instance"),
             "tagName": "checkbox_string_regular_expression"
@@ -224,15 +221,13 @@ export class ConfigComponents {
                 focusStateEnabled: false,
                 iconSize: 20,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.components.select_numeric_greater.option("disabled", !event.value);
-                    this._componentInstanceModel.components.select_numeric_greater.option("value", null);
-                    this._componentInstanceModel.components.select_numeric_less.option("disabled", !event.value);
-                    this._componentInstanceModel.components.select_numeric_less.option("value", null);
+                    this._componentInstanceModel.disableEnableInstance("select_numeric_greater", event.value);
+                    this._componentInstanceModel.disableEnableInstance("select_numeric_less", event.value);
 
-                    // this._componentInstanceModel.components.number_numeric_greater.option("disabled", !event.value);
-                    this._componentInstanceModel.components.number_numeric_greater.option("value", 0);
-                    // this._componentInstanceModel.components.number_numeric_less.option("disabled", !event.value);
-                    this._componentInstanceModel.components.number_numeric_less.option("value", 0);
+                    this._componentInstanceModel.clearInstanceValue("select_numeric_greater");
+                    this._componentInstanceModel.clearInstanceValue("select_numeric_less");
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_less");
                 }
             }).dxCheckBox("instance"),
             "tagName": "checkbox_numeric_range"
@@ -256,12 +251,8 @@ export class ConfigComponents {
                 displayExpr: "VALUE",
                 disabled: true,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.components.number_numeric_greater.option("value", 0);
-                    if (!event.value) {
-                        this._componentInstanceModel.components.number_numeric_greater.option("disabled", true);
-                    } else {
-                        this._componentInstanceModel.components.number_numeric_greater.option("disabled", false);
-                    }
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_greater", !!event.value)
                 }
             }).dxSelectBox("instance"),
             "tagName": "select_numeric_greater"
@@ -296,12 +287,8 @@ export class ConfigComponents {
                 displayExpr: "VALUE",
                 disabled: true,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.components.number_numeric_less.option("value", 0);
-                    if (!event.value) {
-                        this._componentInstanceModel.components.number_numeric_less.option("disabled", true);
-                    } else {
-                        this._componentInstanceModel.components.number_numeric_less.option("disabled", false);
-                    }
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_less");
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_less", !!event.value)
                 }
             }).dxSelectBox("instance"),
             "tagName": "select_numeric_less"
@@ -332,14 +319,14 @@ export class ConfigComponents {
             "instance": $("#button_enum_add_value").dxButton({
                 icon: "fa fa-plus",
                 onClick: (event) => {
-                    let textEnum = this._componentInstanceModel.components.text_enum_add_value.option("value");
+                    let textEnum = this._componentInstanceModel.getInstanceValue("text_enum_add_value");
                     if (!textEnum) { DevExpress.ui.notify("Campo Valor sem conteúdo!", 'error'); return; }
 
-                    let listValues = this._componentInstanceModel.components.list_enum_values.option("items");
+                    let listValues = this._componentInstanceModel.getInstanceValue("list_enum_values");
                     if (listValues.indexOf(textEnum) != -1) { DevExpress.ui.notify("Enum já cadastrado!", 'error'); return; }
 
-                    this._componentInstanceModel.components.list_enum_values.option("items", listValues.concat(textEnum));
-                    this._componentInstanceModel.components.text_enum_add_value.option("value", "");
+                    this._componentInstanceModel.setInstanceValue("list_enum_values", listValues.concat(textEnum))
+                    this._componentInstanceModel.clearInstanceValue("text_enum_add_value");
                 }
             }).dxButton("instance"),
             "tagName": "button_enum_add_value"
@@ -413,10 +400,10 @@ export class ConfigComponents {
                     this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
                     this._componentInstanceModel.clearInstanceValue("number_numeric_less");
 
-                    this._componentInstanceModel.disableEnableInstance("select_numeric_greater");
-                    this._componentInstanceModel.disableEnableInstance("select_numeric_less");
-                    this._componentInstanceModel.disableEnableInstance("number_numeric_greater");
-                    this._componentInstanceModel.disableEnableInstance("number_numeric_less");
+                    this._componentInstanceModel.disableInstance("select_numeric_greater");
+                    this._componentInstanceModel.disableInstance("select_numeric_less");
+                    this._componentInstanceModel.disableInstance("number_numeric_greater");
+                    this._componentInstanceModel.disableInstance("number_numeric_less");
                 }
             },
             "tagName": "js_dxBox_config_numeric_props"
