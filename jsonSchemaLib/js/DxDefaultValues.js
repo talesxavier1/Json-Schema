@@ -6,7 +6,8 @@ export class DxDefaultValues {
         { componentName: "dxCheckBox", defaultValue: false, valueField: "value" },
         { componentName: "dxNumberBox", defaultValue: 0, valueField: "value" },
         { componentName: "dxButton", defaultValue: undefined, valueField: undefined },
-        { componentName: "dxList", defaultValue: [], valueField: "items" }
+        { componentName: "dxList", defaultValue: [], valueField: "items" },
+        { componentName: "dxTreeView", defaultValue: [], valueField: "items" }
     ]
 
     _getComponent = (componentName) => {

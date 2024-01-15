@@ -1,4 +1,4 @@
-const products = [{
+export const products = [{
     id: '1',
     text: 'Stores',
     expanded: true,
@@ -317,4 +317,6 @@ const defaultObject = [
         "childItems": []
     }
 ]
+
+
 

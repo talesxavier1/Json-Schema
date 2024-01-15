@@ -1,9 +1,19 @@
 import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
 import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
+import { BaseNodeModel, TreeItemPropsModel } from "./BaseModels.js";
+import { products } from "./LocalData.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
+
+    setNodeObject = (nodeObject) => {
+        this._componentInstanceModel.setBuiltObject(nodeObject);
+    }
+
+    getNodeObject = () => {
+        return this._componentInstanceModel.getBuiltObject();
+    }
 
     constructor() {
 
@@ -433,7 +443,11 @@ export class ConfigComponents {
 export class HeaderComponents {
     _componentInstanceModel = new ComponentInstanceModel();
 
+    btnTesteClick;
+    btntesteteste;
+
     constructor() {
+
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
             "instance": $('#text_header_version').dxTextBox({
@@ -459,7 +473,7 @@ export class HeaderComponents {
                 text: 'Salvar em nova versão',
                 type: 'success',
                 onClick: (event) => {
-                    this.functionBtnSaveClicked(event)
+
                 }
             }).dxButton("instance"),
             "tagName": "button_header_save_new_version"
@@ -471,13 +485,37 @@ export class HeaderComponents {
                 stylingMode: 'contained',
                 text: 'Selecionar versão',
                 type: 'default',
-                onClick() {
-                    DevExpress.ui.notify('The Contained button was clicked');
-                },
+                onClick: (event) => {
+
+                }
             }).dxButton("instance"),
             "tagName": "button_header_select_version"
         }));
+
     }
 }
 
+export class TreeViewComponents {
+    _componentInstanceModel = new ComponentInstanceModel();
+    _items = [];
 
+    constructor() {
+        this._componentInstanceModel.addInstance(new InstanceProps({
+            "componentName": "dxTreeView",
+            "instance": $('#treeView').dxTreeView({
+                items: this._items,
+                keyExpr: '_tagName',
+                displayExpr: '_name',
+                itemsExpr: '_childrens',
+                onItemClick(e) {
+                },
+            }).dxTreeView('instance'),
+            "tagName": "treeView"
+        }))
+    }
+
+    setItems = (items) => {
+        this._items = items;
+        this._componentInstanceModel.setInstanceValue("treeView", items);
+    }
+}
