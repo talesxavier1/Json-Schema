@@ -1,5 +1,5 @@
 import { InstanceProps } from "./InstanceProps.js";
-import { BaseNodeModel } from "./BaseModels.js"
+import { BaseNodeValueModel } from "./BaseModels.js"
 import { FunctionProps } from "./FunctionProps.js";
 
 export class ComponentInstanceModel {
@@ -53,15 +53,15 @@ export class ComponentInstanceModel {
     }
 
     getBuiltObject = () => {
-        var baseNodeModel = new BaseNodeModel();
-        for (let KEY of Object.keys(baseNodeModel)) {
-            baseNodeModel[KEY] = this.getInstanceValue(KEY);
+        var baseNodeValueModel = new BaseNodeValueModel();
+        for (let KEY of Object.keys(baseNodeValueModel)) {
+            baseNodeValueModel[KEY] = this.getInstanceValue(KEY);
         }
-        return baseNodeModel;
+        return baseNodeValueModel;
     }
 
     setBuiltObject = (nodeObject) => {
-        if (!(nodeObject instanceof BaseNodeModel)) { throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`); };
+        if (!(nodeObject instanceof BaseNodeValueModel)) { throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`); };
         for (let KEY of Object.keys(nodeObject)) {
             this.setInstanceValue(KEY, nodeObject[KEY]);
         }

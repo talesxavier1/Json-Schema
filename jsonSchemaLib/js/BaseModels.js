@@ -1,6 +1,23 @@
+import { GUID } from "./guid.js";
 
 
 export class BaseNodeModel {
+    id;
+    id_ref = "";
+    text = "";
+    expanded = false;
+    contextAddBtn = false;
+    contextRemoveBtn = true;
+    node_value;
+
+    constructor(id_ref) {
+        this.id = GUID.getGUID();
+        this.node_value = new BaseNodeValueModel();
+        this.id_ref = id_ref ? id_ref : "";
+    }
+}
+
+export class BaseNodeValueModel {
     text_name = '';
     text_description = '';
     select_type = null;
@@ -23,37 +40,4 @@ export class BaseNodeModel {
     list_enum_values = []
 
     constructor() { }
-}
-
-
-export class TreeItemPropsModel {
-    _tagName = "";
-    _name = "";
-    _expanded = false;
-    _childrens = [];
-    _icon = "";
-    _value = new BaseNodeModel();
-
-    constructor({ tagName, name, expanded, icon, childrens, value }) {
-        if (!tagName || !name || expanded == undefined, !Array.isArray(childrens) || !value) {
-            throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
-        }
-
-        if (!(value instanceof BaseNodeModel)) {
-            throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
-        }
-
-        for (let CHILD of childrens) {
-            if (!CHILD instanceof TreeItemPropsModel) {
-                throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
-            }
-        }
-
-        this._tagName = tagName;
-        this._name = name;
-        this._expanded = expanded;
-        this._icon = icon;
-        this._value = value;
-        this._childrens = childrens;
-    }
 }
