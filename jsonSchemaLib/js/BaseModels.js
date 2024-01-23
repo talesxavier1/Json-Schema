@@ -1,6 +1,23 @@
+import { GUID } from "./guid.js";
 
 
 export class BaseNodeModel {
+    id;
+    id_ref = "";
+    text = "";
+    expanded = false;
+    contextAddBtn = false;
+    contextRemoveBtn = true;
+    node_value;
+
+    constructor(id_ref) {
+        this.id = GUID.getGUID();
+        this.node_value = new BaseNodeValueModel();
+        this.id_ref = id_ref ? id_ref : "";
+    }
+}
+
+export class BaseNodeValueModel {
     text_name = '';
     text_description = '';
     select_type = null;
@@ -24,4 +41,3 @@ export class BaseNodeModel {
 
     constructor() { }
 }
-

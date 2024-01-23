@@ -1,77 +1,21 @@
-import { ConfigComponents, HeaderComponents } from "./JSComponents.js";
+import { ConfigComponents, HeaderComponents, TreeViewComponents } from "./JSComponents.js";
+import { LOCAL_DATA } from "./LocalData.js";
+
+
 
 
 const main = () => {
     const configComponents = new ConfigComponents();
     const headerComponents = new HeaderComponents();
+    const treeViewComponents = new TreeViewComponents();
 
-
+    treeViewComponents.setItems(LOCAL_DATA);
+    treeViewComponents.onNodeClicked = (event) => {
+        debugger;
+    }
 
 };
 
 $(() => {
     main();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const treeView = $('#dxTreeView').dxTreeView({
-//     items: products,
-//     width: 300,
-//     onItemClick(e) {
-//         // const item = e.itemData;
-//         // if (item.price) {
-//         //     $('#product-details').removeClass('hidden');
-//         //     $('#product-details > img').attr('src', item.image);
-//         //     $('#product-details > .price').text(`$${item.price}`);
-//         //     $('#product-details > .name').text(item.text);
-//         // } else {
-//         //     $('#product-details').addClass('hidden');
-//         // }
-//     },
-// }).dxTreeView('instance');
-

@@ -1,9 +1,19 @@
 import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
 import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
+import { icons } from "./Consts.js";
+import { BaseNodeModel } from "./BaseModels.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
+
+    setNodeObject = (nodeObject) => {
+        this._componentInstanceModel.setBuiltObject(nodeObject);
+    }
+
+    getNodeObject = () => {
+        return this._componentInstanceModel.getBuiltObject();
+    }
 
     constructor() {
 
@@ -433,7 +443,11 @@ export class ConfigComponents {
 export class HeaderComponents {
     _componentInstanceModel = new ComponentInstanceModel();
 
+    btnTesteClick;
+    btntesteteste;
+
     constructor() {
+
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
             "instance": $('#text_header_version').dxTextBox({
@@ -459,7 +473,7 @@ export class HeaderComponents {
                 text: 'Salvar em nova versão',
                 type: 'success',
                 onClick: (event) => {
-                    this.functionBtnSaveClicked(event)
+
                 }
             }).dxButton("instance"),
             "tagName": "button_header_save_new_version"
@@ -471,13 +485,131 @@ export class HeaderComponents {
                 stylingMode: 'contained',
                 text: 'Selecionar versão',
                 type: 'default',
-                onClick() {
-                    DevExpress.ui.notify('The Contained button was clicked');
-                },
+                onClick: (event) => {
+
+                }
             }).dxButton("instance"),
             "tagName": "button_header_select_version"
         }));
+
     }
 }
 
+export class TreeViewComponents {
+    _componentInstanceModel = new ComponentInstanceModel();
+    _items = [];
+    onNodeClicked;
 
+    constructor() {
+        this._componentInstanceModel.addFunction(new FunctionProps({ //btnAddClicked
+            "functionDefinition": (event) => {
+            },
+            "tagName": "btnAddClicked"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //nodeLessButtonClicked
+            "functionDefinition": (event) => {
+                let items = JSON.parse(JSON.stringify(this._items));
+                let remainingItems = items.filter(VALUE => (
+                    (VALUE.id != event.itemNodeId) &&
+                    (VALUE => VALUE.id_ref == event.itemNodeId)
+                ));
+                this.setItems(remainingItems);
+            },
+            "tagName": "nodeLessButtonClicked"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //nodeAddButtonClicked
+            "functionDefinition": (event) => {
+                let items = JSON.parse(JSON.stringify(this._items));
+                items.push(new BaseNodeModel(event.itemNodeId));
+                this.setItems(items);
+            },
+            "tagName": "nodeAddButtonClicked"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //builtItemTemplate
+            "functionDefinition": (data, index, element) => {
+                let iconProp = (() => {
+                    if (data.node_value.select_type) {
+                        return icons[data.node_value.select_type];
+                    }
+                    return icons["blankFile"];
+                })();
+
+                return `
+                    <div id="node_${data.id}">
+                        <img src="${iconProp.type},${iconProp.value}" width="35" height="35" />
+                        <span>${data.text}</span>
+                    </div>
+                    <div id="nodeContext_${data.id}" ></div>
+                `;
+            },
+            "tagName": "builtItemTemplate"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //nodeClicked
+            "functionDefinition": (event) => {
+                if (this.onNodeClicked) {
+                    this.onNodeClicked(event);
+                }
+            },
+            "tagName": "nodeClicked"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //itemRendered
+            "functionDefinition": ({ itemData }) => {
+                let self = this;
+
+                self._componentInstanceModel.addInstance(new InstanceProps({
+                    "componentName": "dxContextMenu",
+                    "instance": $(`#nodeContext_${itemData.id}`).dxContextMenu({
+                        dataSource: [
+                            { "text": "", "id": "addBtn", "icon": "plussBtnIcon", "color": "#8BC34A", "visible": itemData.contextAddBtn, "itemNodeId": itemData.id },
+                            { "text": "", "id": "removeBtn", "icon": "lessBtnIcon", "color": "#F44336", "visible": itemData.contextRemoveBtn, "itemNodeId": itemData.id }
+                        ],
+                        width: 30,
+                        target: `#node_${itemData.id}`,
+                        itemTemplate: (itemData) => {
+                            let iconProp = icons[itemData.icon];
+                            return `
+                                    <img src="${iconProp.type},${iconProp.value}" width="25" height="25" style="background-color: ${itemData.color}; border-radius: 50%;"/>
+                            `;
+                        },
+                        onItemClick({ itemData }) {
+                            if (itemData.id == "addBtn") {
+                                self._componentInstanceModel.getFunction("nodeAddButtonClicked").functionDefinition(itemData);
+                            } else if (itemData.id == "removeBtn") {
+                                self._componentInstanceModel.getFunction("nodeLessButtonClicked").functionDefinition(itemData);
+                            }
+                        },
+                    }).dxContextMenu("instance"),
+
+                }));
+            },
+            "tagName": "itemRendered"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({
+            "componentName": "dxTreeView",
+            "instance": $('#treeView').dxTreeView({
+                items: this._items,
+                dataStructure: 'plain',
+                parentIdExpr: 'id_ref',
+                keyExpr: 'id',
+                displayExpr: 'text',
+                itemTemplate: this._componentInstanceModel.getFunction("builtItemTemplate").functionDefinition,
+                onItemRendered: this._componentInstanceModel.getFunction("itemRendered").functionDefinition,
+                onItemClick: this._componentInstanceModel.getFunction("nodeClicked").functionDefinition,
+            }).dxTreeView('instance'),
+            "tagName": "treeView"
+        }));
+    }
+
+    setItems = (items) => {
+        this._items = items;
+        this._componentInstanceModel.setInstanceValue("treeView", items);
+    }
+
+
+}
