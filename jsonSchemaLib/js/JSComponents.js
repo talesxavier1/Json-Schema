@@ -6,16 +6,50 @@ import { BaseNodeModel } from "./BaseModels.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
-
-    setNodeObject = (nodeObject) => {
+    _node_id = "";
+    setNodeObject = (nodeObject, node_id) => {
         this._componentInstanceModel.setBuiltObject(nodeObject);
+        this._node_id = node_id;
     }
 
     getNodeObject = () => {
         return this._componentInstanceModel.getBuiltObject();
     }
-
+    // <div class="component" id="button_confirm"></div>
+    // <div class="component" id="button_decline"></div>
     constructor() {
+        //    width: 15rem;
+        //height: 15rem;
+        this._componentInstanceModel.addInstance(new InstanceProps({ //button_confirm
+            "componentName": "dxButton",
+            "instance": $("#button_confirm").dxButton({
+                // text: 'Salvar em nova versão',
+                type: 'success',
+                template: `
+                    <span><img src="${icons.confirmFile.type},${icons.confirmFile.value}" width="65%" /></span>
+                    <span>CONFIRMAR</span>
+                `,
+                focusStateEnabled: false,
+                onClick: (event) => {
+                }
+            }).dxButton("instance"),
+            "tagName": "button_confirm"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //button_decline
+            "componentName": "dxButton",
+            "instance": $("#button_decline").dxButton({
+                type: "danger",
+                template: `
+                <span><img src="${icons.declineFile.type},${icons.declineFile.value}" width="65%"  /></span>
+                <span>CANCELAR</span>
+                `,
+                focusStateEnabled: false,
+                onClick: (event) => {
+                }
+            }).dxButton("instance"),
+            "tagName": "button_decline"
+        }));
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_name
             "componentName": "dxTextBox",
@@ -354,6 +388,7 @@ export class ConfigComponents {
             }).dxList('instance'),
             "tagName": "list_enum_values"
         }));
+
         // ==================================================================================================================== //
 
         // ===================================================== Functions ==================================================== //
