@@ -1,3 +1,4 @@
+import { BaseNodeValueModel } from "./BaseModels.js";
 import { ConfigComponents, HeaderComponents, TreeViewComponents } from "./JSComponents.js";
 import { LOCAL_DATA } from "./LocalData.js";
 
@@ -10,8 +11,9 @@ const main = () => {
     const treeViewComponents = new TreeViewComponents();
 
     treeViewComponents.setItems(LOCAL_DATA);
-    treeViewComponents.onNodeClicked = (event) => {
-        debugger;
+
+    treeViewComponents.onNodeClicked = ({ itemData }) => {
+        configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id);
     }
 
 };

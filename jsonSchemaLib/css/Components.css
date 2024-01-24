@@ -11,7 +11,6 @@
     border-radius: .5rem;
 }
 
-
 #text_header_version,
 #text_header_id {
     margin: 0 0 0 2rem;
@@ -40,6 +39,11 @@
 .dx-checkbox-text {
     padding: 0;
     white-space: nowrap;
+}
+
+.js-config-buttons-decline-confirm {
+    display: flex;
+    justify-content: center;
 }
 
 .js-config-main-props {
