@@ -46,6 +46,10 @@
     justify-content: center;
 }
 
+.btn_decline_acept>img {
+    margin: .5rem;
+}
+
 .js-config-main-props {
     display: flex;
     flex-direction: column;

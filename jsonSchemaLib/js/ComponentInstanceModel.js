@@ -74,8 +74,40 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_FUNCTIONS.push(functionProps);
     }
 
-    getFunction = (tagName) => {
-        return this._ARRAY_COMPONENTS_FUNCTIONS.find(VALUE => VALUE.tagName == tagName);
+    _getFullFunctionIntances = (tagName) => {
+        if (typeof tagName != "string") {
+            throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
+        }
+        let result = this._ARRAY_COMPONENTS_FUNCTIONS.find(VALUE => VALUE.tagName == tagName);
+        if (!result) {
+            console.log(`[AVISO]-[ComponentInstanceModel] Não foi possível encontrar functionInstance com tag name '${tagName}'`)
+            return;
+        }
+        return result.functionDefinition;
+    }
+
+    _getFunctionIntances = (tagName, functionName) => {
+        if (typeof functionName != "string") {
+            throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
+        }
+        let functionComponents = this._getFullFunctionIntances(tagName);
+        if (!functionComponents) { return }
+
+        if (!functionComponents.hasOwnProperty(functionName)) {
+            console.warn(`[AVISO]-[ComponentInstanceModel] Não foi possível encontrar função com nome '${functionName}' em '${tagName}'`);
+            return;
+        }
+
+        return functionComponents[functionName];
+    }
+
+    getFunction = (tagName, functionName) => {
+        if (functionName) {
+            return this._getFunctionIntances(tagName, functionName);
+        } else {
+            return this._getFullFunctionIntances(tagName);
+        }
+
     }
 
     constructor() { }
