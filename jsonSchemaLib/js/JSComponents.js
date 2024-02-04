@@ -727,6 +727,37 @@ export class TreeViewComponents {
                 return itemsArray;
             })(finalItems)
 
+            /* Valida se todos os itens do tipo 'array' possuem seu filho 'ARRAY_ELEMENT' */
+            finalItems = ((param) => {
+                let itemsArray = param;
+
+                let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
+                for (let ITEM of arrayItems) {
+                    let arrayElement = findArrayElement(itemsArray, ITEM);
+                    if (!arrayElement) {
+                        itemsArray.push((() => {
+                            let instanceValue = new BaseNodeModel(ITEM.id);
+                            instanceValue.text = "ARRAY ELEMENT";
+                            instanceValue.node_value.text_name = "ARRAY_ELEMENT";
+                            instanceValue.node_value.text_description = "ARRAY ELEMENT";
+                            instanceValue.node_value.select_type = ITEM.node_value.select_array_type;
+                            return instanceValue;
+                        })());
+                    }
+                }
+
+                return itemsArray;
+            })(finalItems)
+
+            /* Procura elementos que não são 'ARRAY_ELEMENT' e remove.  */
+            finalItems = ((param) => {
+                let itemsArray = param;
+                let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
+                for (let ITEM of arrayItems) {
+
+                }
+
+            })(finalItems)
 
             return finalItems;
         };
@@ -762,60 +793,49 @@ export class TreeViewComponents {
             return finalItems;
         }
 
-        let copyItems = reviewArrayItems(JSON.parse(JSON.stringify(itemsParam)));
-        copyItems = reviewObjectItems(JSON.parse(JSON.stringify(copyItems)));
-        let finalItems = [];
+        let finalItems = itemsParam;
 
-        for (let ITEM of copyItems) {
-            let copyValue = JSON.parse(JSON.stringify(ITEM));
-            let nodeValue = copyValue.node_value;
-            copyValue.text = nodeValue.text_description;
+        finalItems = reviewArrayItems(finalItems);
+        finalItems = reviewObjectItems(finalItems);
 
-            switch (nodeValue.select_type) {
+        finalItems = finalItems.map(VALUE => {
+            let item = VALUE;
+
+            switch (item.node_value.select_type) {
                 case "object":
-                    copyValue.contextAddBtn = true;
-                    copyValue.contextRemoveBtn = true;
-                    copyValue.expanded = true;
+                    item.contextAddBtn = true;
+                    item.contextRemoveBtn = true;
+                    item.expanded = true;
                     break;
                 case "array":
-                    copyValue.contextAddBtn = false;
-                    copyValue.contextRemoveBtn = true;
-                    copyValue.expanded = false;
-                    let arrayElement = findArrayElement(copyItems, ITEM);
-                    if (!arrayElement) {
-                        finalItems.push((() => {
-                            let instanceValue = new BaseNodeModel(ITEM.id);
-                            instanceValue.text = "ARRAY ELEMENT";
-                            instanceValue.node_value.text_name = "ARRAY_ELEMENT";
-                            instanceValue.node_value.text_description = "ARRAY ELEMENT";
-                            instanceValue.node_value.select_type = ITEM.node_value.select_array_type;
-                            return instanceValue;
-                        })());
-                    }
+                    item.contextAddBtn = false;
+                    item.contextRemoveBtn = true;
+                    item.expanded = false;
                     break;
                 case "string":
                 case "integer":
                 case "number":
                 case "enum":
                 case "boolean":
-                    copyValue.contextAddBtn = false;
-                    copyValue.contextRemoveBtn = true;
-                    copyValue.expanded = false;
+                    item.contextAddBtn = false;
+                    item.contextRemoveBtn = true;
+                    item.expanded = false;
                     break;
                 default:
-                    copyValue.contextAddBtn = false;
-                    copyValue.contextRemoveBtn = false;
-                    copyValue.expanded = false;
+                    item.contextAddBtn = false;
+                    item.contextRemoveBtn = false;
+                    item.expanded = false;
             }
 
-            if (copyValue.node_value.text_name == "ARRAY_ELEMENT") {
-                copyValue.contextAddBtn = false;
-                copyValue.contextRemoveBtn = false;
-                copyValue.expanded = false;
+            if (item.node_value.text_name == "ARRAY_ELEMENT") {
+                item.contextAddBtn = false;
+                item.contextRemoveBtn = false;
+                item.expanded = false;
             }
 
-            finalItems.push(copyValue);
-        }
+            return item;
+        });
+
         return finalItems;
     }
 
@@ -831,6 +851,7 @@ export class TreeViewComponents {
         for (let INDEX in copyItems) {
             if (copyItems[INDEX].id == nodeId) {
                 copyItems[INDEX].node_value = nodeObject;
+                copyItems[INDEX].text = nodeObject.text_description;
                 break;
             }
         }
