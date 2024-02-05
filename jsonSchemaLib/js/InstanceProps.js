@@ -1,9 +1,31 @@
 import { DxDefaultValues } from "./dxDefaultValues.js";
 
+/**
+ * Classe base que gerencia as instâncias dos componentes DevExtreme. 
+ * @class
+ */
 export class InstanceProps {
+    /**
+     * Instância DevExtreme.
+     * @private
+     * @type {object}
+     */
     _instance;
+    /**
+     * Armazena o nome do campo que o DevExtreme utiliza para guardar o valor da instância.
+     * @private
+     * @type {string}
+     */
     _componentValueField;
+    /**
+     * Armazena o valor padrão da instância DevExtreme.
+     * @private
+     */
     _defaultValue;
+    /**
+     * Tag atribuida a instância. É utilizada para localizar a instância.
+     * @type string
+     */
     tagName;
 
     constructor({ componentName, instance, tagName }) {

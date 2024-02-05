@@ -669,6 +669,11 @@ export class HeaderComponents {
 
 export class TreeViewComponents {
     _componentInstanceModel = new ComponentInstanceModel();
+    /**
+     * Itens atuais do treeView
+     * @type {Array<BaseNodeModel>}
+     * @private 
+     */
     _items = [];
     onNodeClicked = ({ component, element, event, itemData, itemElement, itemIndex, node }) => { };
 
@@ -677,6 +682,7 @@ export class TreeViewComponents {
      * @param {String} nodeIdParam 
      * @param {Array<BaseNodeModel>} itemsParam 
      * @returns {Array<BaseNodeModel>}
+     * @private
      */
     _removeCascade = (nodeIdParam, itemsParam) => {
         let itensFilhos = itemsParam.filter(VALUE => (VALUE.id_ref == nodeIdParam));
@@ -839,12 +845,24 @@ export class TreeViewComponents {
         return finalItems;
     }
 
+    /**
+     * Função que seta os itens e atualiza o treeView.
+     * @param {Array<BaseNodeModel>} items
+     * @returns {void}
+     */
     setItems = (items) => {
         let value = this._reviewItemsProps(items);
         this._items = value;
         this._componentInstanceModel.setInstanceValue("treeView", value);
     }
 
+    /**
+     * Atualiza um node com base no nodeId
+     * @param {object} param0 
+     * @param {string} param0.nodeId - ID do node que deve ser atualizado.
+     * @param {BaseNodeModel} param0.nodeObject - Valor para atualizar.
+     * 
+     */
     updateItem = ({ nodeId, nodeObject }) => {
         let copyItems = JSON.parse(JSON.stringify(this._items));
 
