@@ -749,15 +749,15 @@ export class TreeViewComponents {
                 return itemsArray;
             })(finalItems)
 
-            /* Procura elementos que não são 'ARRAY_ELEMENT' e remove.  */
-            finalItems = ((param) => {
-                let itemsArray = param;
-                let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
-                for (let ITEM of arrayItems) {
+            // /* Procura elementos que não são 'ARRAY_ELEMENT' e remove.  */
+            // finalItems = ((param) => {
+            //     let itemsArray = param;
+            //     let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
+            //     for (let ITEM of arrayItems) {
 
-                }
+            //     }
 
-            })(finalItems)
+            // })(finalItems)
 
             return finalItems;
         };
