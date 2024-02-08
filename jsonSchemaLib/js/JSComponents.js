@@ -6,10 +6,31 @@ import { BaseNodeModel } from "./BaseModels.js";
 
 export class ConfigComponents {
     _componentInstanceModel = new ComponentInstanceModel();
+    /**
+     * nodeId do item atual.
+     * @type {string}
+     */
     _node_id = "";
+
+    /**
+     * Evento chamado quando o botão de confirmar é clicado no painel de configurações.
+     * @param {object} param
+     * @param {object} param.event Evento do clique.
+     * @param {string} param.nodeId Id do node do event.
+     * @param {BaseNodeModel} param.nodeObject Valor final do node.
+     * @returns {void}
+     */
     onConfirmClick = ({ event, nodeId, nodeObject }) => { };
+
     onDeclineClick = ({ event, nodeId }) => { };
 
+    /**
+     * Atualiza as informações do painel de configuração.
+     * Recebe os dados de um node e popula os campos do formulário.
+     * @param {BaseNodeModel} nodeObject 
+     * @param {string} node_id
+     * @returns {void}
+     */
     setNodeObject = (nodeObject, node_id) => {
         this._componentInstanceModel.setBuiltObject(nodeObject);
         this._node_id = node_id;
@@ -615,9 +636,6 @@ export class ConfigComponents {
 export class HeaderComponents {
     _componentInstanceModel = new ComponentInstanceModel();
 
-    btnTesteClick;
-    btntesteteste;
-
     constructor() {
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
@@ -675,13 +693,25 @@ export class TreeViewComponents {
      * @private 
      */
     _items = [];
+    /**
+     * Evento chamado quando um node é clicado.
+     * @param {object} param
+     * @param {object} param.component componente DevExtreme clicado.
+     * @param {object} param.element componente HTML clicado.
+     * @param {object} param.event evento de clique.
+     * @param {BaseNodeModel} param.itemData Informaçoes do node clicado.
+     * @param {object} param.itemElement Informações do componente DeveExreme clicado.
+     * @param {integer} param.itemIndex Index do item clicado.
+     * @param {object} param.node Informações do node clicado na estrutura do DevExtreme.
+     * @returns {void}
+     */
     onNodeClicked = ({ component, element, event, itemData, itemElement, itemIndex, node }) => { };
 
     /**
      * Função remove o item com id igual a 'nodeIdParam' e todos os itens abaixo dele.
-     * @param {String} nodeIdParam 
-     * @param {Array<BaseNodeModel>} itemsParam 
-     * @returns {Array<BaseNodeModel>}
+     * @param {String} nodeIdParam id do item que deve ser removido.
+     * @param {Array<BaseNodeModel>} itemsParam Array dos itens atuais.
+     * @returns {Array<BaseNodeModel>} Array de itens restantes.
      * @private
      */
     _removeCascade = (nodeIdParam, itemsParam) => {
@@ -755,15 +785,18 @@ export class TreeViewComponents {
                 return itemsArray;
             })(finalItems)
 
-            // /* Procura elementos que não são 'ARRAY_ELEMENT' e remove.  */
-            // finalItems = ((param) => {
-            //     let itemsArray = param;
-            //     let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
-            //     for (let ITEM of arrayItems) {
-
-            //     }
-
-            // })(finalItems)
+            /* Valida se o componente do tipo 'array' tem apenas o item 'ARRAY_ELEMENT' como filho  */
+            finalItems = ((param) => {
+                let itemsArray = param;
+                let arrayItems = itemsArray.filter(VALUE => VALUE.node_value.select_type == 'array');
+                for (let ITEM of arrayItems) {
+                    let itensFilhoNaoArrayItem = itemsArray.filter(VALUE => VALUE.id_ref == ITEM.id && VALUE.node_value.text_name != "ARRAY_ELEMENT");
+                    itensFilhoNaoArrayItem.forEach(VALUE => {
+                        itemsArray = this._removeCascade(VALUE.id, itemsArray);
+                    });
+                }
+                return itemsArray;
+            })(finalItems)
 
             return finalItems;
         };
@@ -800,7 +833,6 @@ export class TreeViewComponents {
         }
 
         let finalItems = itemsParam;
-
         finalItems = reviewArrayItems(finalItems);
         finalItems = reviewObjectItems(finalItems);
 
@@ -849,6 +881,7 @@ export class TreeViewComponents {
      * Função que seta os itens e atualiza o treeView.
      * @param {Array<BaseNodeModel>} items
      * @returns {void}
+     * @private
      */
     setItems = (items) => {
         let value = this._reviewItemsProps(items);
@@ -858,10 +891,8 @@ export class TreeViewComponents {
 
     /**
      * Atualiza um node com base no nodeId
-     * @param {object} param0 
-     * @param {string} param0.nodeId - ID do node que deve ser atualizado.
-     * @param {BaseNodeModel} param0.nodeObject - Valor para atualizar.
-     * 
+     * @param {string} param.nodeId - ID do node que deve ser atualizado.
+     * @param {BaseNodeModel} param.nodeObject - Valor para atualizar.
      */
     updateItem = ({ nodeId, nodeObject }) => {
         let copyItems = JSON.parse(JSON.stringify(this._items));
@@ -964,13 +995,9 @@ export class TreeViewComponents {
                 displayExpr: 'text',
                 itemTemplate: this._componentInstanceModel.getFunction("builtItemTemplate"),
                 onItemRendered: this._componentInstanceModel.getFunction("itemRendered"),
-                onItemClick: (props) => { this.onNodeClicked(props) },
+                onItemClick: (props) => { debugger; this.onNodeClicked(props); },
             }).dxTreeView('instance'),
             "tagName": "treeView"
         }));
     }
-
-
-
-
 }
