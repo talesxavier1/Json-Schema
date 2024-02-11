@@ -14,6 +14,10 @@ const main = () => {
 
     treeViewComponents.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id);
+    };
+
+    configComponents.onConfirmClick = ({ event, nodeId, nodeObject }) => {
+        treeViewComponents.updateItem({ nodeId, nodeObject });
     }
 
 };

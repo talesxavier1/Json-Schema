@@ -190,7 +190,7 @@ LOCAL_DATA.push({
         "checkbox_required": true,
         "checkbox_nullable": true,
         "checkbox_additional_properties": true,
-        "select_array_type": null,
+        "select_array_type": "object",
         "checkbox_array_min_max": false,
         "number_array_min": 0,
         "number_array_max": 0,
