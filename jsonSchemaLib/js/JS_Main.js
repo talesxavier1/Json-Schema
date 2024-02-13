@@ -12,6 +12,10 @@ const main = () => {
 
     treeViewComponents.setItems(LOCAL_DATA);
 
+    headerComponents.btnSaveNewVersionClicked = (() => {
+        console.log(JSON.stringify(treeViewComponents._items));
+    });
+
     treeViewComponents.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id);
     };
