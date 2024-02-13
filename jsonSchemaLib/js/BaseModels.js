@@ -18,7 +18,7 @@ export class BaseNodeModel {
     id_ref = "";
 
     /**
-     * Nome do node. Campo que é exibido no threeview.
+     * Nome do node. Campo que é exibido no treeview.
      * @type {string}
      */
     text = "";
@@ -71,7 +71,7 @@ export class BaseNodeValueModel {
     text_name = '';
 
     /**
-     * Descrição do campo. Pode ser um nome ou uma frase. campo que é exibido no nodeThree.
+     * Descrição do campo. Pode ser um nome ou uma frase. campo que é exibido no nodeTree.
      * @requires
      * @type {string}
      */
