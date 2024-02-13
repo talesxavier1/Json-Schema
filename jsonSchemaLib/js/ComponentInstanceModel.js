@@ -14,7 +14,7 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_INSTANCES.push(instanceProps);
     }
 
-    getInstance = (tagName) => {
+    getInstanceProps = (tagName) => {
         let value = this._ARRAY_COMPONENTS_INSTANCES.find(VALUE => VALUE.tagName == tagName);
         if (!value) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] instancia com tagName '${tagName} não encontrada'.`);
@@ -23,32 +23,32 @@ export class ComponentInstanceModel {
     }
 
     getInstanceValue = (tagName) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         return instance.getInstanceValue();
     }
 
     setInstanceValue = (tagName, value) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         instance.setInstanceValue(value);
     }
 
     clearInstanceValue = (tagName) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         instance.clearInstanceValue();
     }
 
     disableEnableInstance = (tagName, valueParam) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         instance.disableEnableInstance(valueParam);
     }
 
     disableInstance = (tagName) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         instance.disableInstance();
     }
 
     enableInstance = (tagName) => {
-        let instance = this.getInstance(tagName);
+        let instance = this.getInstanceProps(tagName);
         instance.enableInstance();
     }
 
