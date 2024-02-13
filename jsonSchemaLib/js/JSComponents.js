@@ -5,6 +5,11 @@ import { icons } from "./Consts.js";
 import { BaseNodeModel } from "./BaseModels.js";
 
 export class ConfigComponents {
+    /**
+     * Instancia da classe ComponentInstanceModel que é usada para armazenar e gerenciar as instâncias.
+     * @private
+     * @type {ComponentInstanceModel}
+     */
     _componentInstanceModel = new ComponentInstanceModel();
     /**
      * nodeId do item atual.
@@ -22,6 +27,13 @@ export class ConfigComponents {
      */
     onConfirmClick = ({ event, nodeId, nodeObject }) => { };
 
+    /**
+     * Evento de cancelamento de edição do node.
+     * 
+     * @param {object} param
+     * @param {object} param.event evento de click.
+     * @param {string} param.nodeId ID do node cancelado.
+     */
     onDeclineClick = ({ event, nodeId }) => { };
 
     /**
@@ -38,6 +50,11 @@ export class ConfigComponents {
         this._componentInstanceModel.getFunction("js_config_main_props", "enabledComponents")(true);
     }
 
+    /**
+     * @constructor
+     * Construtor da classe.
+     * @description Cria as instâncias dos componentes devExtreme.
+     */
     constructor() {
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //button_confirm
@@ -636,6 +653,20 @@ export class ConfigComponents {
 export class HeaderComponents {
     _componentInstanceModel = new ComponentInstanceModel();
 
+    /**
+     * Evento de clique do botão Salvar em nova versão.
+     * @param {object} event Evento de clique.
+     * @returns {void}
+     */
+    btnSaveNewVersionClicked = (event) => { };
+
+    /**
+     * Evento de clique do botão Selecionar versão.
+     * @param {object} event Evento de clique.
+     * @returns {void}
+     */
+    btnSelectVersionClicked = (event) => { };
+
     constructor() {
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
@@ -663,7 +694,7 @@ export class HeaderComponents {
                 text: 'Salvar em nova versão',
                 type: 'success',
                 onClick: (event) => {
-
+                    this.btnSaveNewVersionClicked(event);
                 }
             }).dxButton("instance"),
             "tagName": "button_header_save_new_version"
@@ -676,7 +707,7 @@ export class HeaderComponents {
                 text: 'Selecionar versão',
                 type: 'default',
                 onClick: (event) => {
-
+                    this.btnSelectVersionClicked(event);
                 }
             }).dxButton("instance"),
             "tagName": "button_header_select_version"
@@ -686,6 +717,9 @@ export class HeaderComponents {
 }
 
 export class TreeViewComponents {
+    /**
+     * @private
+     */
     _componentInstanceModel = new ComponentInstanceModel();
     /**
      * Itens atuais do treeView
@@ -727,6 +761,7 @@ export class TreeViewComponents {
      * Função valida regras específicas com base no tipo do item.
      * @param {Array<BaseNodeModel>} itemsParam 
      * @returns {Array<BaseNodeModel>}
+     * @private
      */
     _reviewItemsProps = (itemsParam) => {
         /**
@@ -811,20 +846,15 @@ export class TreeViewComponents {
 
             /* Remove os itens 'ARRAY_ELEMENT' filhos de um item 'object' */
             finalItems = ((param) => {
-                let removeCascadeCalled;
                 let itensArray = param;
 
-                do {
-                    let objectItens = itensArray.filter(VALUE => VALUE.node_value.select_type == "object");
-                    for (let ITEM of objectItens) {
-                        let arrayElement = findArrayElement(itensArray, ITEM);
-                        if (arrayElement) {
-                            itensArray = this._removeCascade(arrayElement.id, itensArray);
-                        }
+                let objectItens = itensArray.filter(VALUE => VALUE.node_value.select_type == "object");
+                for (let ITEM of objectItens) {
+                    let arrayElement = findArrayElement(itensArray, ITEM);
+                    if (arrayElement) {
+                        itensArray = this._removeCascade(arrayElement.id, itensArray);
                     }
-
-                } while (removeCascadeCalled);
-
+                }
                 return itensArray;
             })(finalItems);
 
@@ -832,9 +862,35 @@ export class TreeViewComponents {
             return finalItems;
         }
 
+        /**
+         * Função que valida e aplica as regras dos outros itens. 
+         * @param {Array<BaseNodeModel>} itemsArrayParam 
+         */
+        const reviewOthers = (itemsArrayParam) => {
+            let finalItems = itemsArrayParam;
+
+            /* Remove itens filhos de componentes básicos */
+            finalItems = ((param) => {
+
+                let itensArray = param;
+                let objectItens = itensArray.filter(VALUE => ["string", "integer", "number", "enum", "boolean"].includes(VALUE.node_value.select_type));
+
+                for (let ITEM of objectItens) {
+                    let childItens = itensArray.filter(VALUE => VALUE.id_ref == ITEM.id);
+                    for (let CHILD of childItens) {
+                        itensArray = this._removeCascade(CHILD.id, itensArray);
+                    }
+                }
+                return itensArray;
+            })(finalItems);
+
+            return finalItems;
+        }
+
         let finalItems = itemsParam;
         finalItems = reviewArrayItems(finalItems);
         finalItems = reviewObjectItems(finalItems);
+        finalItems = reviewOthers(finalItems);
 
         finalItems = finalItems.map(VALUE => {
             let item = VALUE;
@@ -889,12 +945,27 @@ export class TreeViewComponents {
         this._componentInstanceModel.setInstanceValue("treeView", value);
     }
 
+
+
+    /**
+     * Move o scroll para o item com o id passado.
+     * @private
+     * @param {string} nodeId id do node.
+     * @returns {void}
+     */
+    _scrollFocusItem = (nodeId) => {
+        let instanceProps = this._componentInstanceModel.getInstanceProps("treeView");
+        let instance = instanceProps.getInstance();
+        instance.scrollToItem(nodeId);
+    }
+
     /**
      * Atualiza um node com base no nodeId
      * @param {string} param.nodeId - ID do node que deve ser atualizado.
      * @param {BaseNodeModel} param.nodeObject - Valor para atualizar.
      */
     updateItem = ({ nodeId, nodeObject }) => {
+
         let copyItems = JSON.parse(JSON.stringify(this._items));
 
         for (let INDEX in copyItems) {
@@ -906,6 +977,7 @@ export class TreeViewComponents {
         }
 
         this.setItems(copyItems);
+        this._scrollFocusItem(nodeId);
     }
 
     constructor() {
@@ -995,7 +1067,7 @@ export class TreeViewComponents {
                 displayExpr: 'text',
                 itemTemplate: this._componentInstanceModel.getFunction("builtItemTemplate"),
                 onItemRendered: this._componentInstanceModel.getFunction("itemRendered"),
-                onItemClick: (props) => { debugger; this.onNodeClicked(props); },
+                onItemClick: (props) => { this.onNodeClicked(props); },
             }).dxTreeView('instance'),
             "tagName": "treeView"
         }));

@@ -40,6 +40,14 @@ export class InstanceProps {
     }
 
     /**
+     * Retorna a instancia devExtreme.
+     * @returns {object} instancia devExtreme.
+     */
+    getInstance = () => {
+        return this._instance;
+    }
+
+    /**
      * Retorna o valor da instância
      * @returns {string | number | Array<any>}
      */
