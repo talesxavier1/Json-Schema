@@ -79,27 +79,108 @@ export class BaseNodeValueModel {
 
     /**
      * Tipo do campo.
-     * @type {string}
-     * 
+     * @type {("string"|"number"|"integer"|"object"|"array"|"boolean"|"enum")}
      */
     select_type = null;
+
+    /**
+     * Indica se campo é obrigatório.
+     * @type {boolean}
+     */
     checkbox_required = false;
+
+    /**
+     * Indica se campo pode ser nulo.
+     * @type {boolean}
+     */
     checkbox_nullable = false;
+
+    /**
+     * Indica se campo pode ter elementos adicionais.
+     * @type {boolean}
+     */
     checkbox_additional_properties = false;
+
+    /**
+     * Tipo tipo dos itens do array.
+     * @type {("string"|"number"|"integer"|"object"|"array"|"boolean"|"enum")}
+     */
     select_array_type = null;
+
+    /**
+     * Indica se campo array tem quantidade minima ou máxima de itens.
+     * @type {boolean}
+     */
     checkbox_array_min_max = false;
+
+    /**
+     * Quantidade mínima de itens no array.
+     * @type {number}
+     */
     number_array_min = 0;
+
+    /**
+     * Quantidade máxima de itens no array.
+     * @type {number}
+     */
     number_array_max = 0;
+
+    /**
+     * Indica se array deve ter somente itens únicos.
+     * @type {boolean}
+     */
     checkbox_array_unique_items = false;
+
+    /**
+     * Indica se campo do tipo texto tem expressão regular para validação. 
+     * @type {boolean}
+     */
     checkbox_string_regular_expression = false;
+
+    /**
+     * Expresão regular. 
+     * @type {string}
+     */
     text_string_regular_expression = '';
+
+    /**
+     * indica se campo númérico deve estar em um range. 
+     * @type {boolean}
+     */
     checkbox_numeric_range = false;
+
+    /**
+     * Condição do range maior que. 
+     * @type {(null | "maior_que" | "maior_ou_igual")}
+     */
     select_numeric_greater = null;
-    number_numeric_greater = false;
+
+    /**
+     * Valor para maior que.
+     * @type {number}
+     */
+    number_numeric_greater = 0;
+
+    /**
+     * Condição do range meor que. 
+     * @type {(null | "menor_que" | "menor_ou_igual")}
+     */
     select_numeric_less = null;
+
+    /**
+     * Valor para menor que.
+     * @type {number}
+     */
     number_numeric_less = 0;
-    text_enum_add_value = '';
+
+    //text_enum_add_value = '';
+
+    /**
+     * Lista de valores para campo do tipo enum.
+     * @type {Array<string>}
+     */
     list_enum_values = []
 
     constructor() { }
 }
+
