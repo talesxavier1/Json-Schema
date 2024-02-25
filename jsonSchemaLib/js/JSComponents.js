@@ -1140,15 +1140,34 @@ class TreeView {
 
 class JsonViewer {
 
+    _json;
+    _jsonViewOptions;
+
     /**
-     * @param {object} param
-     * @param {boolean} param.collapsed Define se o visualizador irá abrir com o json minimizado.
-     * @param {boolean} param.rootCollapsable Define se o elemento root irá abrir minimizado.
-     * @param {boolean} param.withQuotes Degine se as Keys vão ser envolvidas por aspas
-     * @param {boolean} param.withLinks Define se os links devem ficar sublinhados
+     * Define o json do jsonViewer.
+     * @param {object} json
+     * @throws {Error} Parâmetro json não é um objeto ou não foi passado.
+     */
+    setJson = (json) => {
+        if (!json || typeof json != "object") { throw new Error(`[ERRO]-[JsonViewer] Parametro inválido.`); }
+        this._json = json;
+        this._updateJson();
+    }
+
+    _updateJsonView = () => {
+        $('#jsonRenderer').jsonViewer(this._json, this._jsonViewOptions);
+    }
+
+
+    /**
+     * @param {object} options
+     * @param {boolean} options.collapsed Define se o visualizador irá abrir com o json minimizado.
+     * @param {boolean} options.rootCollapsable Define se o elemento root irá abrir minimizado.
+     * @param {boolean} options.withQuotes Degine se as Keys vão ser envolvidas por aspas
+     * @param {boolean} options.withLinks Define se os links devem ficar sublinhados
      */
     constructor(options = { collapsed, rootCollapsable, withQuotes, withLinks }) {
-        $('#jsonRenderer').jsonViewer(LOCAL_DATA, options);
+        this._jsonViewOptions = options;
     }
 }
 
