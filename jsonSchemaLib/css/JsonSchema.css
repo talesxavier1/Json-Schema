@@ -25,17 +25,18 @@
     width: 100%;
 }
 
-.js-TreeView-Config {
+.js-View-Config {
     display: flex;
     flex-direction: row;
     flex: 1;
 }
 
-.js-TreeView {
+.js-View {
     background-color: rgb(190, 127, 127);
     width: 65%;
     margin: 0 .5rem .5rem .5rem;
     max-height: 39rem;
+    padding: .5rem;
 }
 
 .js-Config {
@@ -46,9 +47,14 @@
 }
 
 .js-header,
-.js-TreeView,
+.js-View,
+.dx-tabs-wrapper,
 .js-Config {
     border-radius: .3rem;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 2px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
     background-color: #EEEEEE;
+}
+
+.dx-tab {
+    background-color: rgba(0, 0, 0, 0)
 }

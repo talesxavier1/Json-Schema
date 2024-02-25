@@ -1,5 +1,5 @@
 import { BaseNodeValueModel } from "./BaseModels.js";
-import { ConfigComponents, HeaderComponents, TreeViewComponents } from "./JSComponents.js";
+import { ConfigComponents, HeaderComponents, ViewComponents } from "./JSComponents.js";
 import { LOCAL_DATA } from "./LocalData.js";
 
 
@@ -8,20 +8,20 @@ import { LOCAL_DATA } from "./LocalData.js";
 const main = () => {
     const configComponents = new ConfigComponents();
     const headerComponents = new HeaderComponents();
-    const treeViewComponents = new TreeViewComponents();
+    const viewComponents = new ViewComponents();
 
-    treeViewComponents.setItems(LOCAL_DATA);
+    viewComponents.treeView.setItems(LOCAL_DATA);
 
     headerComponents.btnSaveNewVersionClicked = (() => {
-        console.log(JSON.stringify(treeViewComponents._items));
+        console.log(JSON.stringify(viewComponents.treeView._items));
     });
 
-    treeViewComponents.onNodeClicked = ({ itemData }) => {
+    viewComponents.treeView.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id);
     };
 
     configComponents.onConfirmClick = ({ event, nodeId, nodeObject }) => {
-        treeViewComponents.updateItem({ nodeId, nodeObject });
+        viewComponents.treeView.updateItem({ nodeId, nodeObject });
     }
 
 };

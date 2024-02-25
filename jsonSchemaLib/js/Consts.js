@@ -6,7 +6,8 @@ export const dxComponents = [
     { componentName: "dxButton", defaultValue: undefined, valueField: undefined },
     { componentName: "dxContextMenu", defaultValue: undefined, valueField: undefined },
     { componentName: "dxList", defaultValue: [], valueField: "items" },
-    { componentName: "dxTreeView", defaultValue: [], valueField: "items" }
+    { componentName: "dxTreeView", defaultValue: [], valueField: "items" },
+    { componentName: "dxTabs", defaultValue: 0, valueField: "tabIndex" },
 ];
 
 export const icons = {
