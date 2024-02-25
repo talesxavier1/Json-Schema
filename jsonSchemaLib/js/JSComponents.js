@@ -3,6 +3,7 @@ import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
 import { icons } from "./Consts.js";
 import { BaseNodeModel } from "./BaseModels.js";
+import { LOCAL_DATA } from "./LocalData.js";
 
 export class ConfigComponents {
     /**
@@ -716,7 +717,53 @@ export class HeaderComponents {
     }
 }
 
-export class TreeViewComponents {
+export class ViewComponents {
+    _componentInstanceModel = new ComponentInstanceModel();
+
+    jsonViewer = new JsonViewer({ collapsed: true, rootCollapsable: false, withLinks: true, withQuotes: true });
+    treeView = new TreeView();
+
+
+    constructor() {
+        this._componentInstanceModel.addInstance(new InstanceProps({ //tabTreeViewJsonSchema
+            "componentName": "dxTabs",
+            "instance": $('#tabTreeViewJsonSchema').dxTabs({
+                rtlEnabled: false,
+                selectedIndex: 0,
+                showNavButtons: false,
+                focusStateEnabled: false,
+                dataSource: [
+                    {
+                        id: "treeView",
+                        text: 'Tree View',
+                        icon: 'hierarchy',
+                    },
+                    {
+                        id: "jsonRendererContainer",
+                        text: 'Json Schema View',
+                        icon: "codeblock",
+                    }
+                ],
+                orientation: "horizontal",
+                stylingMode: "secondary",
+                iconPosition: "start",
+                onItemClick: ({ itemData }) => {
+                    if (itemData.id == "treeView") {
+                        $("#treeView").show();
+                        $("#jsonRendererContainer").hide();
+                    } else {
+                        $("#jsonRendererContainer").show();
+                        $("#treeView").hide();
+                    }
+                }
+            }).dxTabs('instance'),
+            "tagName": "treeView"
+        }));
+    }
+
+}
+
+class TreeView {
     /**
      * @private
      */
@@ -727,6 +774,7 @@ export class TreeViewComponents {
      * @private 
      */
     _items = [];
+
     /**
      * Evento chamado quando um node é clicado.
      * @param {object} param
@@ -884,6 +932,20 @@ export class TreeViewComponents {
                 return itensArray;
             })(finalItems);
 
+            /* Cria um componente raiz se não tiver nodes. */
+            finalItems = ((param) => {
+                if (param.length == 0) {
+                    let instanceValue = new BaseNodeModel(null);
+                    instanceValue.text = "root";
+                    instanceValue.node_value.text_name = "root";
+                    instanceValue.node_value.text_description = "root";
+                    instanceValue.node_value.select_type = "object";
+
+                    return [instanceValue];
+                }
+                return param;
+            })(finalItems)
+
             return finalItems;
         }
 
@@ -892,6 +954,10 @@ export class TreeViewComponents {
         finalItems = reviewObjectItems(finalItems);
         finalItems = reviewOthers(finalItems);
 
+        /**
+         * Percore todos os itens e define se pode ter as propriedades de adicionar, remover e expandir.
+         * @returns {Array<BaseNodeModel>}
+         */
         finalItems = finalItems.map(VALUE => {
             let item = VALUE;
 
@@ -944,8 +1010,6 @@ export class TreeViewComponents {
         this._items = value;
         this._componentInstanceModel.setInstanceValue("treeView", value);
     }
-
-
 
     /**
      * Move o scroll para o item com o id passado.
@@ -1073,3 +1137,18 @@ export class TreeViewComponents {
         }));
     }
 }
+
+class JsonViewer {
+
+    /**
+     * @param {object} param
+     * @param {boolean} param.collapsed Define se o visualizador irá abrir com o json minimizado.
+     * @param {boolean} param.rootCollapsable Define se o elemento root irá abrir minimizado.
+     * @param {boolean} param.withQuotes Degine se as Keys vão ser envolvidas por aspas
+     * @param {boolean} param.withLinks Define se os links devem ficar sublinhados
+     */
+    constructor(options = { collapsed, rootCollapsable, withQuotes, withLinks }) {
+        $('#jsonRenderer').jsonViewer(LOCAL_DATA, options);
+    }
+}
+

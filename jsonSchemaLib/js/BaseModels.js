@@ -57,7 +57,7 @@ export class BaseNodeModel {
     constructor(id_ref) {
         this.id = GUID.getGUID();
         this.node_value = new BaseNodeValueModel();
-        this.id_ref = id_ref ? id_ref : "";
+        this.id_ref = id_ref ? id_ref : null;
     }
 }
 

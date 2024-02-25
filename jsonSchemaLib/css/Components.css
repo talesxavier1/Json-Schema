@@ -102,3 +102,13 @@
 #list_enum_values {
     height: 10rem;
 }
+
+#tabTreeViewJsonSchema {
+    height: 2.5rem;
+    margin-bottom: .5rem;
+}
+
+#jsonRendererContainer,
+#treeView {
+    height: 35rem;
+}
