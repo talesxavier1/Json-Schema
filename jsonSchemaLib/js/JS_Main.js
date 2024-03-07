@@ -1,8 +1,6 @@
 import { BaseNodeValueModel } from "./BaseModels.js";
 import { ConfigComponents, HeaderComponents, ViewComponents } from "./JSComponents.js";
-import { LOCAL_DATA } from "./LocalData.js";
-
-
+import { JSON_SCHEMA_DATA, LOCAL_DATA } from "./LocalData.js";
 
 
 const main = () => {
@@ -11,9 +9,15 @@ const main = () => {
     const viewComponents = new ViewComponents();
 
     viewComponents.treeView.setItems(LOCAL_DATA);
+    viewComponents.jsonViewer.setJson(JSON_SCHEMA_DATA);
+
+    viewComponents.onTabChanged = (itemData) => {
+
+    }
 
     headerComponents.btnSaveNewVersionClicked = (() => {
-        console.log(JSON.stringify(viewComponents.treeView._items));
+        console.log(viewComponents.getCurrentTab());
+        //console.log(JSON.stringify(viewComponents.treeView._items));
     });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {

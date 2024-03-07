@@ -40,7 +40,7 @@ export class ConfigComponents {
     /**
      * Atualiza as informações do painel de configuração.
      * Recebe os dados de um node e popula os campos do formulário.
-     * @param {BaseNodeModel} nodeObject 
+     * @param {BaseNodeValueModel} nodeObject 
      * @param {string} node_id
      * @returns {void}
      */
@@ -49,6 +49,10 @@ export class ConfigComponents {
         this._node_id = node_id;
         this._componentInstanceModel.getFunction("js_config_buttons_decline_confirm", "enabledComponents")(true);
         this._componentInstanceModel.getFunction("js_config_main_props", "enabledComponents")(true);
+
+        if (nodeObject.select_type != 'object') {
+            this._componentInstanceModel.disableInstance("checkbox_additional_properties");
+        }
     }
 
     /**
@@ -718,11 +722,43 @@ export class HeaderComponents {
 }
 
 export class ViewComponents {
+
+    /**
+     * @private
+     */
     _componentInstanceModel = new ComponentInstanceModel();
 
+    /**
+     * instância da classe de construção do JsonView.
+     * @type {JsonViewer}
+    */
     jsonViewer = new JsonViewer({ collapsed: true, rootCollapsable: false, withLinks: true, withQuotes: true });
+
+    /**
+     * instância da classe de construção do TreeView.
+     * @type {TreeView}
+    */
     treeView = new TreeView();
 
+    /**
+     * @typedef {Object} DataSource
+     * @property {string} id - O id da aba.
+     * @property {string} text - O texto de descrição da aba.
+     * @property {string} icon - O ícone da aba.
+     */
+    /**
+     * Busca a aba atual.
+     * @returns {DataSource} Informações da aba atual.
+     */
+    getCurrentTab = () => {
+        return this._componentInstanceModel.getInstanceValue("tabTreeViewJsonSchema");
+    }
+
+    /**
+     * Evento chamado quando a aba muda.
+     * @param {DataSource} dataSource Informações da aba atual.
+     */
+    onTabChanged = (dataSource) => { }
 
     constructor() {
         this._componentInstanceModel.addInstance(new InstanceProps({ //tabTreeViewJsonSchema
@@ -748,19 +784,26 @@ export class ViewComponents {
                 stylingMode: "secondary",
                 iconPosition: "start",
                 onItemClick: ({ itemData }) => {
-                    if (itemData.id == "treeView") {
-                        $("#treeView").show();
-                        $("#jsonRendererContainer").hide();
-                    } else {
-                        $("#jsonRendererContainer").show();
-                        $("#treeView").hide();
-                    }
+                    this.onTabChanged(itemData);
+                    this._componentInstanceModel.getFunction("show_hide_jsonView_treeview")(itemData);
                 }
             }).dxTabs('instance'),
-            "tagName": "treeView"
+            "tagName": "tabTreeViewJsonSchema"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //show_hide_jsonView_treeview
+            "functionDefinition": (itemData) => {
+                if (itemData.id == "treeView") {
+                    $("#treeView").show();
+                    $("#jsonRendererContainer").hide();
+                } else {
+                    $("#jsonRendererContainer").show();
+                    $("#treeView").hide();
+                }
+            },
+            "tagName": "show_hide_jsonView_treeview"
         }));
     }
-
 }
 
 class TreeView {
@@ -1139,8 +1182,16 @@ class TreeView {
 }
 
 class JsonViewer {
-
+    /**
+     * json atual da view.
+     * @private
+     */
     _json;
+
+    /**
+     * opçoes atuais da view.
+     * @private
+     */
     _jsonViewOptions;
 
     /**
@@ -1151,13 +1202,16 @@ class JsonViewer {
     setJson = (json) => {
         if (!json || typeof json != "object") { throw new Error(`[ERRO]-[JsonViewer] Parametro inválido.`); }
         this._json = json;
-        this._updateJson();
+        this._updateJsonView();
     }
 
+    /**
+     * Atualiza o DOM com o json e as opçoes atuais.
+     * @private
+     */
     _updateJsonView = () => {
         $('#jsonRenderer').jsonViewer(this._json, this._jsonViewOptions);
     }
-
 
     /**
      * @param {object} options
