@@ -1055,6 +1055,15 @@ class TreeView {
     }
 
     /**
+     * Limpa a view.
+     * @returns {void}
+     */
+    clearItems = () => {
+        this._items = [];
+        this._componentInstanceModel.setInstanceValue("treeView", []);
+    }
+
+    /**
      * Move o scroll para o item com o id passado.
      * @private
      * @param {string} nodeId id do node.
@@ -1202,6 +1211,15 @@ class JsonViewer {
     setJson = (json) => {
         if (!json || typeof json != "object") { throw new Error(`[ERRO]-[JsonViewer] Parametro inválido.`); }
         this._json = json;
+        this._updateJsonView();
+    }
+
+    /**
+     * Limpa o json da view.
+     * @returns {void}
+     */
+    clearJson = () => {
+        this._json = "";
         this._updateJsonView();
     }
 
