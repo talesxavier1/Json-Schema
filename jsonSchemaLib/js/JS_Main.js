@@ -25,7 +25,8 @@ const main = () => {
     }
 
     headerComponents.btnSaveNewVersionClicked = (() => {
-
+        let a = viewComponents.treeView._componentInstanceModel.getInstanceProps("treeView")._instance.getNodes();
+        debugger;
     });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {
