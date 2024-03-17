@@ -6,6 +6,7 @@ export class ComponentInstanceModel {
     _ARRAY_COMPONENTS_INSTANCES = [];
     _ARRAY_COMPONENTS_FUNCTIONS = [];
 
+    //TODO documentar
     addInstance = (instanceProps) => {
         if (!(instanceProps instanceof InstanceProps)) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
@@ -14,6 +15,7 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_INSTANCES.push(instanceProps);
     }
 
+    //TODO documentar
     getInstanceProps = (tagName) => {
         let value = this._ARRAY_COMPONENTS_INSTANCES.find(VALUE => VALUE.tagName == tagName);
         if (!value) {
@@ -22,36 +24,61 @@ export class ComponentInstanceModel {
         return value;
     }
 
+    //TODO documentar
     getInstanceValue = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         return instance.getInstanceValue();
     }
 
+    //TODO documentar
     setInstanceValue = (tagName, value) => {
         let instance = this.getInstanceProps(tagName);
         instance.setInstanceValue(value);
     }
 
+    //TODO documentar
     clearInstanceValue = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.clearInstanceValue();
     }
 
+    //TODO documentar
     disableEnableInstance = (tagName, valueParam) => {
         let instance = this.getInstanceProps(tagName);
         instance.disableEnableInstance(valueParam);
     }
 
+    //TODO documentar
     disableInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.disableInstance();
     }
 
+    //TODO documentar
     enableInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.enableInstance();
     }
 
+    //TODO documentar
+    setVisibleInvisibleInstance = (tagName, valueParam) => {
+        let instance = this.getInstanceProps(tagName);
+        instance.setVisibleInvisibleInstance(valueParam);
+    }
+
+    //TODO documentar
+    setInvisibleInstance = (tagName) => {
+        let instance = this.getInstanceProps(tagName);
+        instance.setInvisibleInstance();
+    }
+
+    //TODO documentar
+    setVisibleInstance = (tagName) => {
+        let instance = this.getInstanceProps(tagName);
+        instance.setVisibleInstance();
+    }
+
+    //TODO documentar
     getBuiltObject = () => {
         var baseNodeValueModel = new BaseNodeValueModel();
         for (let KEY of Object.keys(baseNodeValueModel)) {
@@ -60,6 +87,7 @@ export class ComponentInstanceModel {
         return baseNodeValueModel;
     }
 
+    //TODO documentar
     setBuiltObject = (nodeObject) => {
         if (!(nodeObject instanceof BaseNodeValueModel)) { throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`); };
         for (let KEY of Object.keys(nodeObject)) {
@@ -67,6 +95,7 @@ export class ComponentInstanceModel {
         }
     }
 
+    //TODO documentar
     addFunction = (functionProps) => {
         if (!(functionProps instanceof FunctionProps)) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
@@ -74,6 +103,7 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_FUNCTIONS.push(functionProps);
     }
 
+    //TODO documentar
     _getFullFunctionIntances = (tagName) => {
         if (typeof tagName != "string") {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
@@ -86,6 +116,7 @@ export class ComponentInstanceModel {
         return result.functionDefinition;
     }
 
+    //TODO documentar
     _getFunctionIntances = (tagName, functionName) => {
         if (typeof functionName != "string") {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
@@ -101,6 +132,7 @@ export class ComponentInstanceModel {
         return functionComponents[functionName];
     }
 
+    //TODO documentar
     getFunction = (tagName, functionName) => {
         if (functionName) {
             return this._getFunctionIntances(tagName, functionName);

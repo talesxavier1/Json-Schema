@@ -103,4 +103,23 @@ export class InstanceProps {
         this._instance.option("disabled", false);
     }
 
+    //TODO documentar
+    setVisibleInstance = () => {
+        this._instance.option("visible", true);
+    }
+
+    //TODO documentar
+    setInvisibleInstance = () => {
+        this._instance.option("visible", false);
+    }
+
+    //TODO documentar
+    setVisibleInvisibleInstance = (valueParam) => {
+        if (valueParam != undefined) {
+            this._instance.option("visible", !!valueParam);
+        }
+        let value = this._instance.option("visible");
+        this._instance.option("visible", !value);
+    }
+
 }
