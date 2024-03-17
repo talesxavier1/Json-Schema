@@ -1228,7 +1228,11 @@ class JsonViewer {
      * @private
      */
     _updateJsonView = () => {
-        $('#jsonRenderer').jsonViewer(this._json, this._jsonViewOptions);
+        let jsonViewrIframe = $("#JsonViewerIframe");
+        if (jsonViewrIframe.length) {
+            let setJson = jsonViewrIframe[0].contentWindow.setJson;
+            setJson(JSON.stringify(this._json));
+        }
     }
 
     /**
