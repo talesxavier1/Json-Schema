@@ -112,3 +112,14 @@
 #treeView {
     height: 35rem;
 }
+
+#btnHide,
+#btnShow {
+    background-color: rgba(0, 0, 0, 0);
+
+}
+
+#btnHide>div>i,
+#btnShow>div>i {
+    font-size: 30px;
+}

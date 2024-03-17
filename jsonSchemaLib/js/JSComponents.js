@@ -62,6 +62,41 @@ export class ConfigComponents {
      */
     constructor() {
 
+        this._componentInstanceModel.addInstance(new InstanceProps({ //btnShow
+            "componentName": "dxButton",
+            "instance": $("#btnShow").dxButton({
+                visible: false,
+                type: 'normal',
+                icon: "hidepanel",
+                focusStateEnabled: false,
+                onClick: (event) => {
+                    this._componentInstanceModel.setVisibleInstance("btnHide");
+                    this._componentInstanceModel.setInvisibleInstance("btnShow");
+                    $("#jsDxScrollContent").show();
+                    $("#js_Config").toggleClass('js-Config-show');
+                    $("#js_Config").toggleClass('js-Config-hide');
+                }
+            }).dxButton("instance"),
+            "tagName": "btnShow"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //btnHide
+            "componentName": "dxButton",
+            "instance": $("#btnHide").dxButton({
+                type: 'normal',
+                icon: "showpanel",
+                focusStateEnabled: false,
+                onClick: (event) => {
+                    this._componentInstanceModel.setInvisibleInstance("btnHide");
+                    this._componentInstanceModel.setVisibleInstance("btnShow");
+                    $("#jsDxScrollContent").hide();
+                    $("#js_Config").toggleClass('js-Config-show');
+                    $("#js_Config").toggleClass('js-Config-hide');
+                }
+            }).dxButton("instance"),
+            "tagName": "btnHide"
+        }));
+
         this._componentInstanceModel.addInstance(new InstanceProps({ //button_confirm
             "componentName": "dxButton",
             "instance": $("#button_confirm").dxButton({
@@ -732,7 +767,7 @@ export class ViewComponents {
      * instância da classe de construção do JsonView.
      * @type {JsonViewer}
     */
-    jsonViewer = new JsonViewer({ collapsed: true, rootCollapsable: false, withLinks: true, withQuotes: true });
+    jsonViewer = new JsonViewer();
 
     /**
      * instância da classe de construção do TreeView.
@@ -1197,17 +1232,13 @@ class JsonViewer {
      */
     _json;
 
-    /**
-     * opçoes atuais da view.
-     * @private
-     */
-    _jsonViewOptions;
 
     /**
      * Define o json do jsonViewer.
      * @param {object} json
      * @throws {Error} Parâmetro json não é um objeto ou não foi passado.
      */
+
     setJson = (json) => {
         if (!json || typeof json != "object") { throw new Error(`[ERRO]-[JsonViewer] Parametro inválido.`); }
         this._json = json;
@@ -1235,15 +1266,7 @@ class JsonViewer {
         }
     }
 
-    /**
-     * @param {object} options
-     * @param {boolean} options.collapsed Define se o visualizador irá abrir com o json minimizado.
-     * @param {boolean} options.rootCollapsable Define se o elemento root irá abrir minimizado.
-     * @param {boolean} options.withQuotes Degine se as Keys vão ser envolvidas por aspas
-     * @param {boolean} options.withLinks Define se os links devem ficar sublinhados
-     */
-    constructor(options = { collapsed, rootCollapsable, withQuotes, withLinks }) {
-        this._jsonViewOptions = options;
-    }
+
+    constructor() { }
 }
 
