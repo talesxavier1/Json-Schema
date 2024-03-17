@@ -2,6 +2,9 @@ import { BaseNodeValueModel } from "./BaseModels.js";
 import { ConfigComponents, HeaderComponents, ViewComponents } from "./JSComponents.js";
 import { JSON_SCHEMA_DATA, LOCAL_DATA } from "./LocalData.js";
 
+import "../../lib/DevExtreme/Lib/js/dx.all.js";
+import "../../lib/DevExtreme/Lib/js/localization/dx.messages.pt.js";
+
 const main = () => {
     const configComponents = new ConfigComponents();
     const headerComponents = new HeaderComponents();
@@ -30,6 +33,11 @@ const main = () => {
         viewComponents.treeView.updateItem({ nodeId, nodeObject });
     }
 
+
+    $(".scroll").dxScrollView({
+        direction: 'vertical'
+    });
+    DevExpress.localization.locale(navigator.language);
 };
 
 $(() => {
