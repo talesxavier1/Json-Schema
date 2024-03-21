@@ -6,7 +6,12 @@ export class ComponentInstanceModel {
     _ARRAY_COMPONENTS_INSTANCES = [];
     _ARRAY_COMPONENTS_FUNCTIONS = [];
 
-    //TODO documentar
+    /**
+     * Adiciona uma instância ao Array de instâncias.
+     * @param {InstanceProps} instanceProps
+     * @returns {void}
+     * @throws Lança um erro caso o parâmetro instanceProps não for passado.
+     */
     addInstance = (instanceProps) => {
         if (!(instanceProps instanceof InstanceProps)) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
@@ -15,7 +20,11 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_INSTANCES.push(instanceProps);
     }
 
-    //TODO documentar
+    /**
+     * @param {Sring} tagName Tag usada como chave para identificar a instância.
+     * @returns {InstanceProps} Instância
+     * @throws Lança um erro caso a intância procurada não seja encontrada.
+     */
     getInstanceProps = (tagName) => {
         let value = this._ARRAY_COMPONENTS_INSTANCES.find(VALUE => VALUE.tagName == tagName);
         if (!value) {
@@ -24,61 +33,113 @@ export class ComponentInstanceModel {
         return value;
     }
 
-    //TODO documentar
+    /**
+     * Procura uma instância com tag name igual a passada e retorna o valor da instância.
+     * 
+     * O tipo de retorno irá denpender do tipo de componente DevExtreme.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @returns {any} Valor encontrado para a instância.
+     */
     getInstanceValue = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         return instance.getInstanceValue();
     }
 
-    //TODO documentar
+    /**
+     * Atuliza o valor da instância
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @param {any} value Valor que deve ser setado no instância.
+     * @returns {void}
+     */
     setInstanceValue = (tagName, value) => {
         let instance = this.getInstanceProps(tagName);
         instance.setInstanceValue(value);
     }
 
-    //TODO documentar
+    /**
+     * Define o valor padrão da instância.
+     * 
+     * O valor que será setado irá depender do tipo de componente DevExtreme.
+     * @param {String} tagName
+     * @returns {void}
+     */
     clearInstanceValue = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.clearInstanceValue();
     }
 
-    //TODO documentar
+    /**
+     * Habilita ou desabilita a instância.
+     * 
+     * Quando valueParam não é passado, a instância rebece o valor inverso do campo disabled atual.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @param {boolean | undefined} valueParam
+     * @returns {void}
+     */
     disableEnableInstance = (tagName, valueParam) => {
         let instance = this.getInstanceProps(tagName);
         instance.disableEnableInstance(valueParam);
     }
 
-    //TODO documentar
+    /**
+     * Desabilita a instância.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @returns {void}
+     */
     disableInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.disableInstance();
     }
 
-    //TODO documentar
+    /**
+    * Habilita a instância.
+    * @param {String} tagName Tag usada como chave para identificar a instância.
+    * @returns {void} 
+    */
     enableInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.enableInstance();
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância invisível.
+     * 
+     * Se valueParam não for passado, o valor setado será o inverso do atual.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @param {boolean | undefined} valueParam
+     * @returns {void}
+     */
     setVisibleInvisibleInstance = (tagName, valueParam) => {
         let instance = this.getInstanceProps(tagName);
         instance.setVisibleInvisibleInstance(valueParam);
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância invisível.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @returns {void}
+     */
     setInvisibleInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.setInvisibleInstance();
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância invisível.
+     * @param {String} tagName Tag usada como chave para identificar a instância.
+     * @returns {void}
+     */
     setVisibleInstance = (tagName) => {
         let instance = this.getInstanceProps(tagName);
         instance.setVisibleInstance();
     }
 
-    //TODO documentar
+    /**
+     * Monta um objeto BaseNodeValueModel com base nas Key desse objeto.
+     * 
+     * 
+     * @returns {BaseNodeValueModel}
+     */
     getBuiltObject = () => {
         var baseNodeValueModel = new BaseNodeValueModel();
         for (let KEY of Object.keys(baseNodeValueModel)) {
