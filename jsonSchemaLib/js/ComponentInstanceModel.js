@@ -137,8 +137,8 @@ export class ComponentInstanceModel {
     /**
      * Monta um objeto BaseNodeValueModel com base nas Key desse objeto.
      * 
-     * 
-     * @returns {BaseNodeValueModel}
+     * ** As Keys do obj BaseNodeValueModel devem ser iguais as tagNames das instâncias.
+     * @returns {BaseNodeValueModel} Classe com todas as configurações do node.
      */
     getBuiltObject = () => {
         var baseNodeValueModel = new BaseNodeValueModel();
@@ -148,7 +148,11 @@ export class ComponentInstanceModel {
         return baseNodeValueModel;
     }
 
-    //TODO documentar
+    /**
+     * Seta um Node Value para a instância.
+     * @param {BaseNodeValueModel} nodeObject Classe com todas as configurações do node.
+     * @throws Lança um erro caso nodeObject não for uma insância de BaseNodeValueModel.
+     */
     setBuiltObject = (nodeObject) => {
         if (!(nodeObject instanceof BaseNodeValueModel)) { throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`); };
         for (let KEY of Object.keys(nodeObject)) {
@@ -156,7 +160,13 @@ export class ComponentInstanceModel {
         }
     }
 
-    //TODO documentar
+    /**
+     * Adiciona um conjunto de funções ao array.
+     * 
+     * Essas funções podem ser utilizadas em qualquer lugar.
+     * @param {FunctionProps} functionProps Classe com as configurações das funções
+     * @throws Lança um erro caso functionProps não for uma instância de FunctionProps.
+     */
     addFunction = (functionProps) => {
         if (!(functionProps instanceof FunctionProps)) {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parametro inválido.`);
@@ -164,7 +174,13 @@ export class ComponentInstanceModel {
         this._ARRAY_COMPONENTS_FUNCTIONS.push(functionProps);
     }
 
-    //TODO documentar
+    /**
+     * Busca a function com base no tagName
+     * @param {String} tagName identificador da function. 
+     * @returns {Object} Objeto com todas as funções 
+     * @throws Lança um erro caso a function não seja encontrada.
+     * @private
+     */
     _getFullFunctionIntances = (tagName) => {
         if (typeof tagName != "string") {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
@@ -177,9 +193,16 @@ export class ComponentInstanceModel {
         return result.functionDefinition;
     }
 
-    //TODO documentar
+    /**
+     * Busca a FunctionProps e encontra a function com nome passado em functionName
+     * @param {String} tagName Identificador da FunctionProps
+     * @param {String} functionName Nome da Function definition
+     * @returns {Function} Função encontrada
+     * @throws Lança um erro caso tagName ou functionName não forem String
+     * @private
+     */
     _getFunctionIntances = (tagName, functionName) => {
-        if (typeof functionName != "string") {
+        if (typeof functionName != "string" || typeof functionName != "string") {
             throw new Error(`[ERRO]-[ComponentInstanceModel] Parâmetro inválido.`);
         }
         let functionComponents = this._getFullFunctionIntances(tagName);
@@ -193,7 +216,13 @@ export class ComponentInstanceModel {
         return functionComponents[functionName];
     }
 
-    //TODO documentar
+    /**
+     * Busca um conjunto de Funções ou uma função expecífica.
+     * 
+     * @param {String} tagName identificador da FunctionProps
+     * @param {String | undefined} functionName Nome da função expecífica.
+     * @returns {Function | Object} Retorna uma função expecífica ou um obj com todas as funções dispoíveis.
+     */
     getFunction = (tagName, functionName) => {
         if (functionName) {
             return this._getFunctionIntances(tagName, functionName);

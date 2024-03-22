@@ -103,17 +103,28 @@ export class InstanceProps {
         this._instance.option("disabled", false);
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância visível.
+     */
     setVisibleInstance = () => {
         this._instance.option("visible", true);
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância invisível.
+     */
     setInvisibleInstance = () => {
         this._instance.option("visible", false);
     }
 
-    //TODO documentar
+    /**
+     * Deixa a instância visível ou invisível.
+     * 
+     * Se valueParam for passado, o valor será considerado para alterar a visibilidade da instância.
+     * 
+     * Se valueParam não for passado, o parâmetro visible da instância será invertido.
+     * @param {boolean|undefined} valueParam 
+     */
     setVisibleInvisibleInstance = (valueParam) => {
         if (valueParam != undefined) {
             this._instance.option("visible", !!valueParam);
