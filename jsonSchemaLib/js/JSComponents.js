@@ -461,7 +461,7 @@ export class ConfigComponents {
         this._componentInstanceModel.addInstance(new InstanceProps({ //button_enum_add_value
             "componentName": "dxButton",
             "instance": $("#button_enum_add_value").dxButton({
-                icon: "fa fa-plus",
+                icon: `data:image/png;base64,${icons.addNoCircle.value}`,
                 onClick: (event) => {
                     let textEnum = this._componentInstanceModel.getInstanceValue("text_enum_add_value");
                     if (!textEnum) { DevExpress.ui.notify("Campo Valor sem conteúdo!", 'error'); return; }
