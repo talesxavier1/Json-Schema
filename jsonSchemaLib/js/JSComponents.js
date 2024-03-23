@@ -1131,6 +1131,10 @@ class TreeView {
         this._scrollFocusItem(nodeId);
     }
 
+    buildJsonSchema = () => {
+        const jsonSchemaBuilder = new JsonSchemaBuilder(this._items)
+    }
+
     constructor() {
         this._componentInstanceModel.addFunction(new FunctionProps({ //btnAddClicked
             "functionDefinition": (event) => {
@@ -1268,5 +1272,20 @@ class JsonViewer {
 
 
     constructor() { }
+}
+
+class JsonSchemaBuilder {
+
+    _treeArrayItems
+
+    _toHierarchy = (treeArrayItems) => {
+        let rootNode = treeArrayItems.filter(VALUE => !VALUE.id_ref);
+        debugger;
+    }
+
+    constructor(treeArrayItems) {
+        this._treeArrayItems = treeArrayItems;
+        this._toHierarchy(treeArrayItems);
+    }
 }
 

@@ -20,6 +20,8 @@ const main = () => {
         }
     }
 
+    viewComponents.treeView.buildJsonSchema();
+
     headerComponents.btnSaveNewVersionClicked = (() => {
         let a = viewComponents.treeView._componentInstanceModel.getInstanceProps("treeView")._instance.getNodes();
         debugger;
