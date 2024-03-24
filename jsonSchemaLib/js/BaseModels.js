@@ -179,7 +179,14 @@ export class BaseNodeValueModel {
      * Lista de valores para campo do tipo enum.
      * @type {Array<string>}
      */
-    list_enum_values = []
+    list_enum_values = [];
+
+    //TODO documentar
+    checkbox_object_pattern_keys = false;
+
+    //TODO documentar
+    text_object_pattern_keys = "";
+
 
     constructor() { }
 }
