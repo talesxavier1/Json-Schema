@@ -4,6 +4,7 @@ import { FunctionProps } from "./FunctionProps.js";
 import { icons } from "./Consts.js";
 import { BaseNodeModel } from "./BaseModels.js";
 import { LOCAL_DATA } from "./LocalData.js";
+import { GUID } from "./guid.js";
 
 export class ConfigComponents {
     /**
@@ -42,9 +43,10 @@ export class ConfigComponents {
      * Recebe os dados de um node e popula os campos do formulário.
      * @param {BaseNodeValueModel} nodeObject 
      * @param {string} node_id
+     * @param {string} id_ref
      * @returns {void}
      */
-    setNodeObject = (nodeObject, node_id) => {
+    setNodeObject = (nodeObject, node_id, id_ref) => {
         this._componentInstanceModel.setBuiltObject(nodeObject);
         this._node_id = node_id;
         this._componentInstanceModel.getFunction("js_config_buttons_decline_confirm", "enabledComponents")(true);
@@ -53,6 +55,12 @@ export class ConfigComponents {
         if (nodeObject.select_type != 'object') {
             this._componentInstanceModel.disableInstance("checkbox_additional_properties");
         }
+
+        if (!id_ref) {
+            this._componentInstanceModel.disableInstance("checkbox_nullable");
+            this._componentInstanceModel.disableInstance("checkbox_required");
+        }
+
     }
 
     /**
@@ -200,6 +208,10 @@ export class ConfigComponents {
                 onValueChanged: (event) => {
                     let functions;
 
+                    functions = this._componentInstanceModel.getFunction("js_dxBox_config_object_props");
+                    functions.setVisible(event.value == "object");
+                    functions.clearFields();
+
                     functions = this._componentInstanceModel.getFunction("js_dxBox_config_array_props");
                     functions.setVisible(event.value == "array");
                     functions.clearFields();
@@ -252,6 +264,32 @@ export class ConfigComponents {
                 disabled: true,
             }).dxCheckBox("instance"),
             "tagName": "checkbox_additional_properties"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_object_pattern_keys
+            "componentName": "dxCheckBox",
+            "instance": $("#checkbox_object_pattern_keys").dxCheckBox({
+                /* Default Value: false */
+                text: 'Object pattern Keys',
+                focusStateEnabled: false,
+                disabled: false,
+                iconSize: 20,
+                onValueChanged: () => {
+                    this._componentInstanceModel.disableEnableInstance("text_object_pattern_keys");
+                    this._componentInstanceModel.clearInstanceValue("text_object_pattern_keys");
+                }
+            }).dxCheckBox("instance"),
+            "tagName": "checkbox_object_pattern_keys"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //text_object_pattern_keys
+            "componentName": "dxTextBox",
+            "instance": $('#text_object_pattern_keys').dxTextBox({
+                label: "Pattern",
+                disabled: true,
+                labelMode: "static"
+            }).dxTextBox("instance"),
+            "tagName": "text_object_pattern_keys",
         }));
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //select_array_type
@@ -521,9 +559,37 @@ export class ConfigComponents {
                     this._componentInstanceModel.disableEnableInstance("checkbox_required", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_nullable", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_additional_properties", booleanValue);
+
                 }
             },
             "tagName": "js_config_main_props"
+        }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_object_props
+            "functionDefinition": {
+                setVisible: (value) => {
+                    if (value == true) {
+                        $("#js_dxBox_config_object_props").show();
+                    } else if (value == false) {
+                        $("#js_dxBox_config_object_props").hide();
+                    }
+                },
+                clearFields: () => {
+                    this._componentInstanceModel.clearInstanceValue("checkbox_object_pattern_keys");
+                    this._componentInstanceModel.clearInstanceValue("text_object_pattern_keys");
+                },
+                enabledComponents: (booleanValue) => {
+                    if (typeof booleanValue != "boolean") {
+                        throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
+                    }
+                    this._componentInstanceModel.disableEnableInstance("checkbox_object_pattern_keys", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("text_object_pattern_keys", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("number_array_min", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("number_array_max", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_array_unique_items", booleanValue);
+                }
+            },
+            "tagName": "js_dxBox_config_object_props"
         }));
 
         this._componentInstanceModel.addFunction(new FunctionProps({ //js_dxBox_config_array_props
@@ -1018,7 +1084,7 @@ class TreeView {
                     instanceValue.node_value.text_name = "root";
                     instanceValue.node_value.text_description = "root";
                     instanceValue.node_value.select_type = "object";
-
+                    instanceValue.node_value.checkbox_required = true;
                     return [instanceValue];
                 }
                 return param;
@@ -1132,7 +1198,12 @@ class TreeView {
     }
 
     buildJsonSchema = () => {
-        const jsonSchemaBuilder = new JsonSchemaBuilder(this._items)
+        let treeViewInstance = this._componentInstanceModel.getInstanceProps("treeView");
+        treeViewInstance = treeViewInstance.getInstance();
+        let hierarchyItems = treeViewInstance.getNodes();
+
+        const jsonSchemaBuilder = new JsonSchemaBuilder(hierarchyItems);
+        return jsonSchemaBuilder.buildJsonSchema();
     }
 
     constructor() {
@@ -1275,17 +1346,65 @@ class JsonViewer {
 }
 
 class JsonSchemaBuilder {
+    _hierarchyItems;
 
-    _treeArrayItems
+    _buildByType = {
+        "object": (nodeValue, children) => {
+            let finalObject = {
+                "type": "object",
+                "description": nodeValue.text_description,
+                "properties": {},
+                "additionalProperties": nodeValue.checkbox_additional_properties,
+                "required": []
+            }
 
-    _toHierarchy = (treeArrayItems) => {
-        let rootNode = treeArrayItems.filter(VALUE => !VALUE.id_ref);
-        debugger;
+            if (nodeValue.checkbox_object_pattern_keys) {
+                finalObject["propertyNames"] = {
+                    "pattern": nodeValue.text_object_pattern_keys
+                };
+            }
+
+            for (let CHILD of children) {
+                let inNodeValue = CHILD.itemData.node_value;
+                let inSelectType = inNodeValue.select_type;
+                let inChildren = CHILD.children;
+
+                finalObject.properties[inNodeValue.text_name] = this._buildByType[inSelectType](inNodeValue, inChildren);
+
+                if (inNodeValue.checkbox_required) {
+                    finalObject.required.push(inNodeValue.text_name);
+                }
+            }
+
+            return finalObject;
+        },
+        "string": (nodeValue, children) => {
+
+        }
     }
 
-    constructor(treeArrayItems) {
-        this._treeArrayItems = treeArrayItems;
-        this._toHierarchy(treeArrayItems);
+    buildJsonSchema = () => {
+        console.log(this._hierarchyItems);
+
+        let finalObject = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "$id": GUID.getGUID(),
+            "title": this._hierarchyItems[0].text,
+            "description": this._hierarchyItems[0].text,
+            ...(() => {
+                let nodeValue = this._hierarchyItems[0].itemData.node_value;
+                let selectType = nodeValue.select_type;
+                let children = this._hierarchyItems[0].children;
+
+                return this._buildByType[selectType](nodeValue, children);
+            })()
+        }
+        console.log(JSON.stringify(finalObject));
+        return finalObject;
+    }
+
+    constructor(hierarchyItems) {
+        this._hierarchyItems = hierarchyItems;
     }
 }
 
