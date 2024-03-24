@@ -60,7 +60,27 @@ export class ConfigComponents {
             this._componentInstanceModel.disableInstance("checkbox_nullable");
             this._componentInstanceModel.disableInstance("checkbox_required");
         }
+    }
 
+    //TODO documentar
+    hideShowConfigs = (visible) => {
+        if (typeof visible != "boolean") {
+            throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
+        }
+        this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "configVisible")(visible);
+    }
+
+    //TODO documentar
+    enabledConfigs = (enabled) => {
+        if (typeof enabled != "boolean") {
+            throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
+        }
+        this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "enabledComponents")(enabled);
+    }
+
+    //TODO documentar
+    clearConfigs = () => {
+        this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "cleanAll")();
     }
 
     /**
@@ -77,13 +97,7 @@ export class ConfigComponents {
                 type: 'normal',
                 icon: "hidepanel",
                 focusStateEnabled: false,
-                onClick: (event) => {
-                    this._componentInstanceModel.setVisibleInstance("btnHide");
-                    this._componentInstanceModel.setInvisibleInstance("btnShow");
-                    $("#jsDxScrollContent").show();
-                    $("#js_Config").toggleClass('js-Config-show');
-                    $("#js_Config").toggleClass('js-Config-hide');
-                }
+                onClick: (() => this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "configVisible")(true))
             }).dxButton("instance"),
             "tagName": "btnShow"
         }));
@@ -94,13 +108,7 @@ export class ConfigComponents {
                 type: 'normal',
                 icon: "showpanel",
                 focusStateEnabled: false,
-                onClick: (event) => {
-                    this._componentInstanceModel.setInvisibleInstance("btnHide");
-                    this._componentInstanceModel.setVisibleInstance("btnShow");
-                    $("#jsDxScrollContent").hide();
-                    $("#js_Config").toggleClass('js-Config-show');
-                    $("#js_Config").toggleClass('js-Config-hide');
-                }
+                onClick: (() => this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "configVisible")(false))
             }).dxButton("instance"),
             "tagName": "btnHide"
         }));
@@ -346,7 +354,8 @@ export class ConfigComponents {
             "instance": $("#number_array_min").dxNumberBox({
                 disabled: true,
                 label: "Min",
-                labelMode: "static"
+                labelMode: "static",
+                min: 1
             }).dxNumberBox("instance"),
             "tagName": "number_array_min"
         }));
@@ -356,7 +365,8 @@ export class ConfigComponents {
             "instance": $("#number_array_max").dxNumberBox({
                 disabled: true,
                 label: "Max",
-                labelMode: "static"
+                labelMode: "static",
+                min: 1
             }).dxNumberBox("instance"),
             "tagName": "number_array_max"
         }));
@@ -396,23 +406,135 @@ export class ConfigComponents {
             "tagName": "text_string_regular_expression"
         }));
 
-        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_numeric_range
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_string_format
             "componentName": "dxCheckBox",
-            "instance": $("#checkbox_numeric_range").dxCheckBox({
-                text: 'Range',
+            "instance": $("#checkbox_string_format").dxCheckBox({
+                text: 'String format',
+                focusStateEnabled: false,
+                iconSize: 20,
+                onValueChanged: () => {
+                    this._componentInstanceModel.disableEnableInstance("select_string_format");
+                    this._componentInstanceModel.clearInstanceValue("select_string_format");
+                }
+            }).dxCheckBox("instance"),
+            "tagName": "checkbox_string_format"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //select_string_format
+            "componentName": "dxSelectBox",
+            "instance": $("#select_string_format").dxSelectBox({
+                dataSource: [
+                    null,
+                    {
+                        "ID": "date-time",
+                        "VALUE": "date-time"
+                    }, {
+                        "ID": "time",
+                        "VALUE": "time"
+                    }, {
+                        "ID": "date",
+                        "VALUE": "date"
+                    }, {
+                        "ID": "duration",
+                        "VALUE": "duration"
+                    }, {
+                        "ID": "email",
+                        "VALUE": "email"
+                    }, {
+                        "ID": "idn-email",
+                        "VALUE": "idn-email"
+                    }, {
+                        "ID": "hostname",
+                        "VALUE": "hostname"
+                    }, {
+                        "ID": "idn-hostname",
+                        "VALUE": "idn-hostname"
+                    }, {
+                        "ID": "ipv4",
+                        "VALUE": "ipv4"
+                    }, {
+                        "ID": "ipv6",
+                        "VALUE": "ipv6"
+                    }, {
+                        "ID": "uuid",
+                        "VALUE": "uuid"
+                    }, {
+                        "ID": "uri",
+                        "VALUE": "uri"
+                    }, {
+                        "ID": "uri-reference",
+                        "VALUE": "uri-reference"
+                    }, {
+                        "ID": "iri",
+                        "VALUE": "iri"
+                    }, {
+                        "ID": "iri-reference",
+                        "VALUE": "iri-reference"
+                    }, {
+                        "ID": "uri-template",
+                        "VALUE": "uri-template"
+                    }, {
+                        "ID": "json-pointer",
+                        "VALUE": "json-pointer"
+                    }, {
+                        "ID": "regex",
+                        "VALUE": "regex"
+                    }
+                ],
+                label: "Format",
+                valueExpr: "ID",
+                displayExpr: "VALUE",
+                disabled: true,
+            }).dxSelectBox("instance"),
+            "tagName": "select_string_format"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_string_length_less
+            "componentName": "dxCheckBox",
+            "instance": $("#checkbox_string_length_less").dxCheckBox({
+                text: 'Tamanho mínimo',
                 focusStateEnabled: false,
                 iconSize: 20,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.disableEnableInstance("select_numeric_greater", event.value);
-                    this._componentInstanceModel.disableEnableInstance("select_numeric_less", event.value);
-
-                    this._componentInstanceModel.clearInstanceValue("select_numeric_greater");
-                    this._componentInstanceModel.clearInstanceValue("select_numeric_less");
-                    this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
-                    this._componentInstanceModel.clearInstanceValue("number_numeric_less");
+                    this._componentInstanceModel.disableEnableInstance("number_string_length_less", event.value);
                 }
             }).dxCheckBox("instance"),
-            "tagName": "checkbox_numeric_range"
+            "tagName": "checkbox_string_length_less"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //number_string_length_less
+            "componentName": "dxNumberBox",
+            "instance": $("#number_string_length_less").dxNumberBox({
+                label: "Valor",
+                labelMode: "static",
+                disabled: true,
+                min: 1
+            }).dxNumberBox("instance"),
+            "tagName": "number_string_length_less"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_string_length_greater
+            "componentName": "dxCheckBox",
+            "instance": $("#checkbox_string_length_greater").dxCheckBox({
+                text: 'Tamanho máximo',
+                focusStateEnabled: false,
+                iconSize: 20,
+                onValueChanged: (event) => {
+                    this._componentInstanceModel.disableEnableInstance("number_string_length_greater", event.value);
+                }
+            }).dxCheckBox("instance"),
+            "tagName": "checkbox_string_length_greater"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //number_string_length_greater
+            "componentName": "dxNumberBox",
+            "instance": $("#number_string_length_greater").dxNumberBox({
+                label: "Valor",
+                labelMode: "static",
+                disabled: true,
+                min: 1
+            }).dxNumberBox("instance"),
+            "tagName": "number_string_length_greater"
         }));
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //select_numeric_greater
@@ -431,7 +553,7 @@ export class ConfigComponents {
                 label: "Maior",
                 valueExpr: "ID",
                 displayExpr: "VALUE",
-                disabled: true,
+                disabled: false,
                 onValueChanged: (event) => {
                     this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
                     this._componentInstanceModel.disableEnableInstance("number_numeric_greater", !!event.value)
@@ -451,6 +573,30 @@ export class ConfigComponents {
             "tagName": "number_numeric_greater"
         }));
 
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_numeric_multiple
+            "componentName": "dxCheckBox",
+            "instance": $("#checkbox_numeric_multiple").dxCheckBox({
+                text: 'Múltiplo',
+                focusStateEnabled: false,
+                iconSize: 20,
+                onValueChanged: (event) => {
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_multiple", event.value);
+                }
+            }).dxCheckBox("instance"),
+            "tagName": "checkbox_numeric_multiple"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //number_numeric_multiple
+            "componentName": "dxNumberBox",
+            "instance": $("#number_numeric_multiple").dxNumberBox({
+                label: "Valor",
+                labelMode: "static",
+                disabled: true,
+                min: 0.01
+            }).dxNumberBox("instance"),
+            "tagName": "number_numeric_multiple"
+        }));
+
         this._componentInstanceModel.addInstance(new InstanceProps({ //select_numeric_less
             "componentName": "dxSelectBox",
             "instance": $("#select_numeric_less").dxSelectBox({
@@ -467,7 +613,7 @@ export class ConfigComponents {
                 label: "Menor",
                 valueExpr: "ID",
                 displayExpr: "VALUE",
-                disabled: true,
+                disabled: false,
                 onValueChanged: (event) => {
                     this._componentInstanceModel.clearInstanceValue("number_numeric_less");
                     this._componentInstanceModel.disableEnableInstance("number_numeric_less", !!event.value)
@@ -584,9 +730,6 @@ export class ConfigComponents {
                     }
                     this._componentInstanceModel.disableEnableInstance("checkbox_object_pattern_keys", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("text_object_pattern_keys", booleanValue);
-                    this._componentInstanceModel.disableEnableInstance("number_array_min", booleanValue);
-                    this._componentInstanceModel.disableEnableInstance("number_array_max", booleanValue);
-                    this._componentInstanceModel.disableEnableInstance("checkbox_array_unique_items", booleanValue);
                 }
             },
             "tagName": "js_dxBox_config_object_props"
@@ -634,6 +777,13 @@ export class ConfigComponents {
                 clearFields: () => {
                     this._componentInstanceModel.clearInstanceValue("text_string_regular_expression");
                     this._componentInstanceModel.clearInstanceValue("checkbox_string_regular_expression");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_string_format");
+                    this._componentInstanceModel.clearInstanceValue("select_string_format");
+                    this._componentInstanceModel.clearInstanceValue("number_string_length_greater");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_string_length_greater");
+                    this._componentInstanceModel.clearInstanceValue("number_string_length_less");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_string_length_less");
+
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
@@ -641,6 +791,12 @@ export class ConfigComponents {
                     }
                     this._componentInstanceModel.disableEnableInstance("checkbox_string_regular_expression", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("text_string_regular_expression", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_string_format", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("select_string_format", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("number_string_length_greater", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_string_length_greater", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("number_string_length_less", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_string_length_less", booleanValue);
                 }
             },
             "tagName": "js_dxBox_config_string_props"
@@ -656,11 +812,12 @@ export class ConfigComponents {
                     }
                 },
                 clearFields: () => {
-                    this._componentInstanceModel.clearInstanceValue("checkbox_numeric_range");
                     this._componentInstanceModel.clearInstanceValue("select_numeric_greater");
                     this._componentInstanceModel.clearInstanceValue("select_numeric_less");
                     this._componentInstanceModel.clearInstanceValue("number_numeric_greater");
                     this._componentInstanceModel.clearInstanceValue("number_numeric_less");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_numeric_multiple");
+                    this._componentInstanceModel.clearInstanceValue("number_numeric_multiple");
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
@@ -670,6 +827,8 @@ export class ConfigComponents {
                     this._componentInstanceModel.disableEnableInstance("select_numeric_less", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("number_numeric_greater", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("number_numeric_less", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("number_numeric_multiple", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_numeric_multiple", booleanValue);
                 }
             },
             "tagName": "js_dxBox_config_numeric_props"
@@ -724,14 +883,23 @@ export class ConfigComponents {
 
         this._componentInstanceModel.addFunction(new FunctionProps({ //GLOBAL_CONFIG_FUNCTIONS
             "functionDefinition": {
-                configVisible: (booleanValue) => {
-                    if (typeof booleanValue != "boolean") {
+                configVisible: (visible) => {
+                    if (typeof visible != "boolean") {
                         throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
                     }
-                    if (booleanValue) {
-                        $("#js_Config").show();
+
+                    if (visible) {
+                        this._componentInstanceModel.setVisibleInstance("btnHide");
+                        this._componentInstanceModel.setInvisibleInstance("btnShow");
+                        $("#jsDxScrollContent").show();
+                        $("#js_Config").addClass('js-Config-show');
+                        $("#js_Config").removeClass('js-Config-hide');
                     } else {
-                        $("#js_Config").hide();
+                        this._componentInstanceModel.setInvisibleInstance("btnHide");
+                        this._componentInstanceModel.setVisibleInstance("btnShow");
+                        $("#jsDxScrollContent").hide();
+                        $("#js_Config").removeClass('js-Config-show');
+                        $("#js_Config").addClass('js-Config-hide');
                     }
                 },
                 cleanAll: () => {
@@ -739,6 +907,7 @@ export class ConfigComponents {
                     this._componentInstanceModel.getFunction("js_dxBox_config_string_props", "clearFields")();
                     this._componentInstanceModel.getFunction("js_dxBox_config_numeric_props", "clearFields")();
                     this._componentInstanceModel.getFunction("js_dxBox_config_enum_props", "clearFields")();
+                    this._componentInstanceModel.getFunction("js_dxBox_config_object_props", "clearFields")();
                     this._componentInstanceModel.getFunction("js_config_main_props", "clearFields")();
                 },
                 enabledComponents: (booleanValue) => {
@@ -746,11 +915,11 @@ export class ConfigComponents {
                         throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
                     }
                     this._componentInstanceModel.getFunction("js_config_main_props", "enabledComponents")(booleanValue);
+                    this._componentInstanceModel.getFunction("js_config_buttons_decline_confirm", "enabledComponents")(booleanValue);
                 }
             },
             "tagName": "GLOBAL_CONFIG_FUNCTIONS"
         }));
-
         // ==================================================================================================================== //
     }
 
@@ -1050,9 +1219,27 @@ class TreeView {
                 return itensArray;
             })(finalItems);
 
+            //TODO criar validação de pattern preenchido ou não
 
             return finalItems;
         }
+
+        //TODO criar reviewString
+
+        //tratar a seleção do tamanho mínimo e máxmo
+        //Preenchido ou não
+        //minimo maior que máximo (criar aviso.)
+
+        //Validar expressão regular
+        //preenchido ou não
+
+        //validar string format
+        //preenchido ou não
+
+        //TODO criar validaçoes numeric
+        // validar se multiplo foi preenchido
+        //validar se maior foi preenchido
+        //validar se menor foi preenchido
 
         /**
          * Função que valida e aplica as regras dos outros itens. 
@@ -1351,7 +1538,7 @@ class JsonSchemaBuilder {
     _buildByType = {
         "object": (nodeValue, children) => {
             let finalObject = {
-                "type": "object",
+                "type": ["object"],
                 "description": nodeValue.text_description,
                 "properties": {},
                 "additionalProperties": nodeValue.checkbox_additional_properties,
@@ -1362,6 +1549,10 @@ class JsonSchemaBuilder {
                 finalObject["propertyNames"] = {
                     "pattern": nodeValue.text_object_pattern_keys
                 };
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
             }
 
             for (let CHILD of children) {
@@ -1378,13 +1569,101 @@ class JsonSchemaBuilder {
 
             return finalObject;
         },
-        "string": (nodeValue, children) => {
+        "string": (nodeValue) => {
+            let finalObject = {
+                "type": ["string"],
+                "description": nodeValue.text_description,
+            }
 
+            if (nodeValue.checkbox_string_regular_expression) {
+                finalObject.pattern = nodeValue.text_string_regular_expression
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
+            }
+
+            if (nodeValue.checkbox_string_format) {
+                finalObject.format = nodeValue.select_string_format;
+            }
+
+            if (nodeValue.checkbox_string_length_greater) {
+                finalObject.maxLength = nodeValue.number_string_length_greater;
+            }
+
+            if (nodeValue.checkbox_string_length_less) {
+                finalObject.minLength = nodeValue.number_string_length_less;
+            }
+
+            return finalObject;
+        },
+        "integer": (nodeValue) => {
+            let finalObject = {
+                "type": ["integer"],
+                "description": nodeValue.text_description,
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
+            }
+
+            if (nodeValue.checkbox_numeric_multiple) {
+                finalObject.multipleOf = nodeValue.number_numeric_multiple
+            }
+
+
+            if (nodeValue.select_numeric_greater) {
+                if (nodeValue.select_numeric_greater == "maior_que") {
+                    finalObject.maximum = nodeValue.number_numeric_greater;
+                } else {
+                    finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
+                }
+
+                if (nodeValue.select_numeric_greater == "menor_que") {
+                    finalObject.minimum = nodeValue.number_numeric_less;
+
+                } else {
+                    finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+                }
+            }
+
+            return finalObject;
+        },
+        "number": (nodeValue) => {
+            let finalObject = {
+                "type": ["integer"],
+                "description": nodeValue.text_description,
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
+            }
+
+            if (nodeValue.checkbox_numeric_multiple) {
+                finalObject.multipleOf = nodeValue.number_numeric_multiple
+            }
+
+
+            if (nodeValue.select_numeric_greater) {
+                if (nodeValue.select_numeric_greater == "maior_que") {
+                    finalObject.maximum = nodeValue.number_numeric_greater;
+                } else {
+                    finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
+                }
+
+                if (nodeValue.select_numeric_greater == "menor_que") {
+                    finalObject.minimum = nodeValue.number_numeric_less;
+
+                } else {
+                    finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+                }
+            }
+
+            return finalObject;
         }
     }
 
     buildJsonSchema = () => {
-        console.log(this._hierarchyItems);
 
         let finalObject = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1399,7 +1678,6 @@ class JsonSchemaBuilder {
                 return this._buildByType[selectType](nodeValue, children);
             })()
         }
-        console.log(JSON.stringify(finalObject));
         return finalObject;
     }
 

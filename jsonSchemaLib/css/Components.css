@@ -65,33 +65,28 @@
     flex-direction: column;
 }
 
-.js-config-array-props-min-max {
+.js-config-array-props-min-max,
+.js-config-numeric-props-multiples,
+.js-config-numeric-props-greater,
+.js-config-numeric-props-less,
+.js-config-enum-props-add,
+.js-config-string-props-regular-expression,
+.js-config-string-props-format,
+.js-config-string-props-length-greater,
+.js-config-string-props-length-less {
     display: flex;
 }
 
-.js-config-string-props {
-    display: flex;
-}
-
-#text_string_regular_expression {
+#text_string_regular_expression,
+#number_string_length_less,
+#number_string_length_greater,
+#number_numeric_multiple {
     width: 100%;
-}
-
-.js-config-numeric-props-greater {
-    display: flex;
-}
-
-.js-config-numeric-props-less {
-    display: flex;
 }
 
 .js-config-enum-props {
     display: flex;
     flex-direction: column;
-}
-
-.js-config-enum-props-add {
-    display: flex;
 }
 
 #button_enum_add_value {
@@ -122,4 +117,8 @@
 #btnHide>div>i,
 #btnShow>div>i {
     font-size: 30px;
+}
+
+#checkbox_string_format {
+    width: 115px;
 }

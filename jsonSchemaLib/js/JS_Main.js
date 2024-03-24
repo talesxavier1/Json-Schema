@@ -14,7 +14,7 @@ const main = () => {
     viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
 
     headerComponents.btnSaveNewVersionClicked = (() => {
-        viewComponents.treeView.buildJsonSchema();
+
     });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {
@@ -24,6 +24,21 @@ const main = () => {
     configComponents.onConfirmClick = ({ event, nodeId, nodeObject }) => {
         viewComponents.treeView.updateItem({ nodeId, nodeObject });
         viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
+    }
+
+    viewComponents.onTabChanged = (dataSource) => {
+        if (dataSource.id == "jsonRendererContainer") {
+            configComponents.hideShowConfigs(false);
+            configComponents.clearConfigs();
+            configComponents.enabledConfigs(false);
+            return;
+        }
+
+        if (dataSource.id == "treeView") {
+            configComponents.hideShowConfigs(true);
+
+            return;
+        }
     }
 
 

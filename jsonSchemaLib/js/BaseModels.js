@@ -61,7 +61,12 @@ export class BaseNodeModel {
     }
 }
 
+
 export class BaseNodeValueModel {
+    /**
+    * ** A Ordem de declaração dos componentes do objeto inpacta nas regras de visualização dos componentes.
+    * ** EXEMPLO: se um campo do tipo Text estiver declarado antes de um checkBox que ativa a sua edição, o devExtreme não altera do valor da instância e o campo Text fica vazio.
+    */
 
     /**
      * Nome interno do campo. é usado como key na montagem do jsonSchema.
@@ -137,17 +142,29 @@ export class BaseNodeValueModel {
      */
     checkbox_string_regular_expression = false;
 
+    //TODO documentar
+    checkbox_string_format = false;
+
+    //TODO documentar
+    select_string_format = null;
+
+    //TODO documentar
+    checkbox_string_length_greater = false;
+
+    //TODO documentar
+    number_string_length_greater = 0;
+
+    //TODO documentar
+    checkbox_string_length_less = false;
+
+    //TODO documentar
+    number_string_length_less = 0;
+
     /**
      * Expresão regular. 
      * @type {string}
      */
     text_string_regular_expression = '';
-
-    /**
-     * indica se campo númérico deve estar em um range. 
-     * @type {boolean}
-     */
-    checkbox_numeric_range = false;
 
     /**
      * Condição do range maior que. 
@@ -173,7 +190,11 @@ export class BaseNodeValueModel {
      */
     number_numeric_less = 0;
 
-    //text_enum_add_value = '';
+    //TODO Documentar
+    checkbox_numeric_multiple = false;
+
+    //TODO documentar
+    number_numeric_multiple = 0;
 
     /**
      * Lista de valores para campo do tipo enum.
