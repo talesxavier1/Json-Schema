@@ -55,9 +55,9 @@
     flex-direction: column;
 }
 
-.js-config-main-props-checkboxes {
+.js-config-object-props {
     display: flex;
-
+    flex-direction: row;
 }
 
 .js-config-array-props {
