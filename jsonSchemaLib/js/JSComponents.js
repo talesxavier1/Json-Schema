@@ -52,9 +52,6 @@ export class ConfigComponents {
         this._componentInstanceModel.getFunction("js_config_buttons_decline_confirm", "enabledComponents")(true);
         this._componentInstanceModel.getFunction("js_config_main_props", "enabledComponents")(true);
 
-        if (nodeObject.select_type != 'object') {
-            this._componentInstanceModel.disableInstance("checkbox_additional_properties");
-        }
 
         if (!id_ref) {
             this._componentInstanceModel.disableInstance("checkbox_nullable");
@@ -233,7 +230,7 @@ export class ConfigComponents {
                     functions.clearFields();
 
                     functions = this._componentInstanceModel.getFunction("js_dxBox_config_enum_props");
-                    functions.setVisible(event.value == "enum");
+                    functions.setVisible(["enum", "string", "integer", "number"].includes(event.value));
                     functions.clearFields();
                 }
             }).dxSelectBox("instance"),
@@ -269,7 +266,7 @@ export class ConfigComponents {
                 text: 'Propriedades adicionais',
                 focusStateEnabled: false,
                 iconSize: 20,
-                disabled: true,
+                disabled: false,
             }).dxCheckBox("instance"),
             "tagName": "checkbox_additional_properties"
         }));
@@ -693,7 +690,6 @@ export class ConfigComponents {
                     this._componentInstanceModel.clearInstanceValue("select_type");
                     this._componentInstanceModel.clearInstanceValue("checkbox_required");
                     this._componentInstanceModel.clearInstanceValue("checkbox_nullable");
-                    this._componentInstanceModel.clearInstanceValue("checkbox_additional_properties");
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
@@ -704,8 +700,6 @@ export class ConfigComponents {
                     this._componentInstanceModel.disableEnableInstance("select_type", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_required", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_nullable", booleanValue);
-                    this._componentInstanceModel.disableEnableInstance("checkbox_additional_properties", booleanValue);
-
                 }
             },
             "tagName": "js_config_main_props"
@@ -723,11 +717,13 @@ export class ConfigComponents {
                 clearFields: () => {
                     this._componentInstanceModel.clearInstanceValue("checkbox_object_pattern_keys");
                     this._componentInstanceModel.clearInstanceValue("text_object_pattern_keys");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_additional_properties");
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
                         throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
                     }
+                    this._componentInstanceModel.disableEnableInstance("checkbox_additional_properties", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_object_pattern_keys", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("text_object_pattern_keys", booleanValue);
                 }
@@ -783,7 +779,6 @@ export class ConfigComponents {
                     this._componentInstanceModel.clearInstanceValue("checkbox_string_length_greater");
                     this._componentInstanceModel.clearInstanceValue("number_string_length_less");
                     this._componentInstanceModel.clearInstanceValue("checkbox_string_length_less");
-
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
@@ -818,6 +813,7 @@ export class ConfigComponents {
                     this._componentInstanceModel.clearInstanceValue("number_numeric_less");
                     this._componentInstanceModel.clearInstanceValue("checkbox_numeric_multiple");
                     this._componentInstanceModel.clearInstanceValue("number_numeric_multiple");
+
                 },
                 enabledComponents: (booleanValue) => {
                     if (typeof booleanValue != "boolean") {
@@ -853,6 +849,7 @@ export class ConfigComponents {
                     }
                     this._componentInstanceModel.disableEnableInstance("text_enum_add_value", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("list_enum_values", booleanValue);
+
                 }
             },
             "tagName": "js_dxBox_config_enum_props"
@@ -1319,7 +1316,7 @@ class TreeView {
             }
 
             if (item.node_value.text_name == "ARRAY_ELEMENT") {
-                item.contextAddBtn = false;
+                item.contextAddBtn = item.node_value.select_type == "object" ? true : false;
                 item.contextRemoveBtn = false;
                 item.expanded = false;
             }
@@ -1595,6 +1592,9 @@ class JsonSchemaBuilder {
                 finalObject.minLength = nodeValue.number_string_length_less;
             }
 
+            if (nodeValue.list_enum_values.length > 0) {
+                finalObject.enum = nodeValue.list_enum_values;
+            }
             return finalObject;
         },
         "integer": (nodeValue) => {
@@ -1627,6 +1627,12 @@ class JsonSchemaBuilder {
                 }
             }
 
+            if (nodeValue.list_enum_values.length > 0) {
+                let items = nodeValue.list_enum_values.map(VALUE => isNaN(Number(VALUE)) ? null : Number(VALUE)).filter(VALUE => VALUE != null);
+                if (items.length > 0) {
+                    finalObject.enum = items;
+                }
+            }
             return finalObject;
         },
         "number": (nodeValue) => {
@@ -1657,6 +1663,70 @@ class JsonSchemaBuilder {
                 } else {
                     finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
                 }
+            }
+
+            if (nodeValue.list_enum_values.length > 0) {
+                let items = nodeValue.list_enum_values.map(VALUE => isNaN(Number(VALUE)) ? null : Number(VALUE)).filter(VALUE => VALUE != null);
+                if (items.length > 0) {
+                    finalObject.enum = items;
+                }
+            }
+
+            return finalObject;
+        },
+        "array": (nodeValue, children) => {
+            let finalObject = {
+                "type": ["array"],
+                "description": nodeValue.text_description,
+                "items": (() => {
+                    let inNodeValue = children[0].itemData.node_value;
+                    let inSelectType = inNodeValue.select_type;
+                    let inChildren = children[0].children;
+
+                    return this._buildByType[inSelectType](inNodeValue, inChildren);
+                })()
+            }
+
+            if (nodeValue.checkbox_array_min_max) {
+                if (nodeValue.number_array_max) {
+                    finalObject.maxItems = nodeValue.number_array_max;
+                }
+                if (nodeValue.number_array_min) {
+                    finalObject.minItems = nodeValue.number_array_min
+                }
+            }
+
+            if (nodeValue.checkbox_array_unique_items) {
+                finalObject.uniqueItems = true;
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
+            }
+
+            return finalObject;
+        },
+        "boolean": (nodeValue) => {
+            let finalObject = {
+                "type": ["boolean"],
+                "description": nodeValue.text_description,
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
+            }
+
+            return finalObject;
+        },
+        "enum": (nodeValue) => {
+            let finalObject = {
+                "type": ["string"],
+                "description": nodeValue.text_description,
+                "enum": nodeValue.list_enum_values
+            }
+
+            if (nodeValue.checkbox_nullable) {
+                finalObject.type.push("null");
             }
 
             return finalObject;

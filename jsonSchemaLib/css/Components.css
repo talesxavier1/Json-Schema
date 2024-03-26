@@ -50,17 +50,10 @@
     margin: .5rem;
 }
 
-.js-config-main-props {
-    display: flex;
-    flex-direction: column;
-}
-
-.js-config-object-props {
-    display: flex;
-    flex-direction: row;
-}
-
-.js-config-array-props {
+.js-config-main-props,
+.js-config-object-props,
+.js-config-array-props,
+.js-config-enum-props {
     display: flex;
     flex-direction: column;
 }
@@ -82,11 +75,6 @@
 #number_string_length_greater,
 #number_numeric_multiple {
     width: 100%;
-}
-
-.js-config-enum-props {
-    display: flex;
-    flex-direction: column;
 }
 
 #button_enum_add_value {
@@ -121,4 +109,13 @@
 
 #checkbox_string_format {
     width: 115px;
+}
+
+#checkbox_additional_properties {
+    width: 100%;
+}
+
+.object-pattern-keys {
+    display: flex;
+    flex-direction: row;
 }
