@@ -46,14 +46,16 @@
                             <div class="js-config-main-props-checkboxes">
                                 <div class="component" id="checkbox_required"></div>
                                 <div class="component" id="checkbox_nullable"></div>
-                                <div class="component" id="checkbox_additional_properties"></div>
                             </div>
                         </div>
                         <!-- Propriedades para o tipo Object -->
                         <div class="js-config-object-props boxshadow" id="js_dxBox_config_object_props"
                             style="display: none;">
-                            <div class="component" id="checkbox_object_pattern_keys"></div>
-                            <div class="component" id="text_object_pattern_keys"></div>
+                            <div class="component" id="checkbox_additional_properties"></div>
+                            <div class="object-pattern-keys">
+                                <div class="component" id="checkbox_object_pattern_keys"></div>
+                                <div class="component" id="text_object_pattern_keys"></div>
+                            </div>
                         </div>
                         <!-- Propriedades para o tipo Array -->
                         <div class="js-config-array-props boxshadow" id="js_dxBox_config_array_props"
@@ -106,6 +108,7 @@
                         <!-- Propriedades para o tipo enum -->
                         <div id="js_dxBox_config_enum_props" class="js-config-enum-props boxshadow"
                             style="display: none;">
+                            <div>ENUM</div>
                             <div class="js-config-enum-props-add">
                                 <div id="button_enum_add_value"></div>
                                 <div class="component" id="text_enum_add_value"></div>

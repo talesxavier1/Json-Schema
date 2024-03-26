@@ -208,7 +208,6 @@ export class BaseNodeValueModel {
     //TODO documentar
     text_object_pattern_keys = "";
 
-
     constructor() { }
 }
 

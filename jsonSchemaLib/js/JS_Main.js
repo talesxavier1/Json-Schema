@@ -11,7 +11,6 @@ const main = () => {
     const viewComponents = new ViewComponents();
 
     viewComponents.treeView.setItems(LOCAL_DATA);
-    viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
 
     headerComponents.btnSaveNewVersionClicked = (() => {
 
@@ -23,7 +22,6 @@ const main = () => {
 
     configComponents.onConfirmClick = ({ event, nodeId, nodeObject }) => {
         viewComponents.treeView.updateItem({ nodeId, nodeObject });
-        viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
     }
 
     viewComponents.onTabChanged = (dataSource) => {
@@ -31,6 +29,7 @@ const main = () => {
             configComponents.hideShowConfigs(false);
             configComponents.clearConfigs();
             configComponents.enabledConfigs(false);
+            viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
             return;
         }
 
