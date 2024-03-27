@@ -8,6 +8,8 @@ export const dxComponents = [
     { componentName: "dxList", defaultValue: [], valueField: "items" },
     { componentName: "dxTreeView", defaultValue: [], valueField: "items" },
     { componentName: "dxTabs", defaultValue: 0, valueField: "selectedItem" },
+    { componentName: "dxPopup", defaultValue: false, valueField: "visible" },
+    { componentName: "dxLoadIndicator", defaultValue: true, valueField: "visible" },
 ];
 
 export const icons = {
