@@ -932,14 +932,10 @@ export class HeaderComponents {
      */
     btnSaveNewVersionClicked = (event) => { };
 
-    /**
-     * Evento de clique do botão Selecionar versão.
-     * @param {object} event Evento de clique.
-     * @returns {void}
-     */
-    btnSelectVersionClicked = (event) => { };
+    getVersions = async (page, take) => { };
 
     constructor() {
+        const self = this;
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
@@ -978,11 +974,69 @@ export class HeaderComponents {
                 stylingMode: 'contained',
                 text: 'Selecionar versão',
                 type: 'default',
-                onClick: (event) => {
-                    this.btnSelectVersionClicked(event);
+                onClick: async (event) => {
+                    let content = this._componentInstanceModel.getFunction("popup_select_version", "show")();
+
+                    let load = $("<div id='dxLoadIndicator'>").dxLoadIndicator({
+                        height: 60,
+                        width: 60,
+                        visible: true
+                    });
+                    content.append(load);
+
+                    let versions = await this.getVersions(1, 10);
+                    content.empty();
+
+                    content.append(JSON.stringify(versions));
+
+                    // // debugger
                 }
             }).dxButton("instance"),
             "tagName": "button_header_select_version"
+        }));
+
+        // return $("<div/>").dxLoadIndicator({
+        //     height: 40,
+        //     width: 40,
+        //     visible: true
+        // });
+        this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version
+            "componentName": "dxPopup",
+            "instance": $('#popup_select_version').dxPopup({
+                width: 450,
+                height: 450,
+                visible: false,
+                title: 'versões',
+                hideOnOutsideClick: false,
+                showCloseButton: true,
+            }).dxPopup('instance'),
+            "tagName": "popup_select_version"
+        }));
+
+        // this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version_load_indicator
+        //     "componentName": "dxLoadIndicator",
+        //     "instance": $('#popup_select_version_load_indicator').dxLoadIndicator({
+        //         height: 40,
+        //         width: 40,
+        //         visible: true
+        //     }).dxLoadIndicator('instance'),
+        //     "tagName": "popup_select_version_load_indicator"
+        // }));
+
+        this._componentInstanceModel.addFunction(new FunctionProps({ //popup_select_version
+            "functionDefinition": {
+                show: () => {
+                    let instance = this._componentInstanceModel.getInstanceProps("popup_select_version").getInstance();
+                    let content;
+                    instance.option("contentTemplate", () => {
+                        content = $("<div></div>");
+                        return content
+                    });
+                    this._componentInstanceModel.setInstanceValue("popup_select_version", true);
+                    return content;
+                }
+            },
+            "tagName": "popup_select_version"
         }));
 
     }

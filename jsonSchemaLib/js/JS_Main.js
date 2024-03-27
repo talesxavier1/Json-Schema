@@ -16,6 +16,31 @@ const main = () => {
 
     });
 
+    headerComponents.getVersions = async (page, take) => {
+        const url = new URL('https://6155b9d4c06a340017b292ad.mockapi.io/api/v1/versions');
+        url.searchParams.append('page', page);
+        url.searchParams.append('limit', take);
+
+        await new Promise((resolve) => {
+            setTimeout(function () {
+                resolve();
+            }, 3000);
+        })
+
+        let result;
+        await $.ajax({
+            url: url,
+            method: "GET",
+            success: function (response) {
+                result = response;
+            },
+            error: function (xhr, status, error) {
+                debugger
+            }
+        });
+        return result;
+    }
+
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id, itemData.id_ref);
     };
