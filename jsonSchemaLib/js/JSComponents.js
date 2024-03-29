@@ -932,11 +932,23 @@ export class HeaderComponents {
      */
     btnSaveNewVersionClicked = (event) => { };
 
-    getVersions = async (page, take) => { };
+    _popUpVersoes;
 
-    constructor() {
-        const self = this;
+    setPopUpVersoesGetContent = (functionParam) => {
+        if (typeof functionParam != "function") {
+            throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesGetContent(functionParam) .")
+        }
+        this._popUpVersoes.popUpVersoesGetContent = functionParam;
+    }
 
+    setOnPopUpVersionClick = (functionParam) => {
+        if (typeof functionParam != "function") {
+            throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesOnClick(functionParam) .")
+        }
+        this._popUpVersoes.onVersionClick = functionParam;
+    }
+
+    constructor(popUpVersoesGetContent) {
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
             "instance": $('#text_header_version').dxTextBox({
@@ -975,69 +987,13 @@ export class HeaderComponents {
                 text: 'Selecionar versão',
                 type: 'default',
                 onClick: async (event) => {
-                    let content = this._componentInstanceModel.getFunction("popup_select_version", "show")();
-
-                    let load = $("<div id='dxLoadIndicator'>").dxLoadIndicator({
-                        height: 60,
-                        width: 60,
-                        visible: true
-                    });
-                    content.append(load);
-
-                    let versions = await this.getVersions(1, 10);
-                    content.empty();
-
-                    content.append(JSON.stringify(versions));
-
-                    // // debugger
+                    this._popUpVersoes.showHidePopUp(true);
                 }
             }).dxButton("instance"),
             "tagName": "button_header_select_version"
         }));
 
-        // return $("<div/>").dxLoadIndicator({
-        //     height: 40,
-        //     width: 40,
-        //     visible: true
-        // });
-        this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version
-            "componentName": "dxPopup",
-            "instance": $('#popup_select_version').dxPopup({
-                width: 450,
-                height: 450,
-                visible: false,
-                title: 'versões',
-                hideOnOutsideClick: false,
-                showCloseButton: true,
-            }).dxPopup('instance'),
-            "tagName": "popup_select_version"
-        }));
-
-        // this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version_load_indicator
-        //     "componentName": "dxLoadIndicator",
-        //     "instance": $('#popup_select_version_load_indicator').dxLoadIndicator({
-        //         height: 40,
-        //         width: 40,
-        //         visible: true
-        //     }).dxLoadIndicator('instance'),
-        //     "tagName": "popup_select_version_load_indicator"
-        // }));
-
-        this._componentInstanceModel.addFunction(new FunctionProps({ //popup_select_version
-            "functionDefinition": {
-                show: () => {
-                    let instance = this._componentInstanceModel.getInstanceProps("popup_select_version").getInstance();
-                    let content;
-                    instance.option("contentTemplate", () => {
-                        content = $("<div></div>");
-                        return content
-                    });
-                    this._componentInstanceModel.setInstanceValue("popup_select_version", true);
-                    return content;
-                }
-            },
-            "tagName": "popup_select_version"
-        }));
+        this._popUpVersoes = new PopUpVersoes(popUpVersoesGetContent);
 
     }
 }
@@ -1810,3 +1766,135 @@ class JsonSchemaBuilder {
     }
 }
 
+class PopUpVersoes {
+    /**
+      * @private
+    */
+    _componentInstanceModel = new ComponentInstanceModel();
+
+    _popUpContent;
+
+    _popUpCurrentContentPage = 1;
+
+    _popUpCurrentTakeContentePage = 10;
+
+    _popUpMainContent = `
+        <div id="popup_select_version_content" class="popup-select-version-content">
+        </div>
+    `;
+
+    popUpVersoesGetContent = async (page, take) => { return [] };
+
+    onVersionClick = (id) => { }
+
+    _onVersionClick = (id) => {
+        this.onVersionClick(id);
+        this.showHidePopUp(false);
+    }
+
+    _showHideLoading = (value) => {
+        if (value) {
+            $(`<div id="popup_select_version_loading"</div>`).dxLoadIndicator({
+                height: 60,
+                width: 60,
+                visible: true
+            }).appendTo(this._popUpContent);
+        } else {
+            $("#popup_select_version_loading").remove();
+        }
+    }
+
+    _validDataArrayContent = (dataArray) => {
+        for (let ITEM of dataArray) {
+            if (!ITEM.dataCriacao || !ITEM.id || !ITEM.numeroVersao) {
+                console.warn([
+                    "[AVISO] - [HeaderComponents] Valore para PopUp de versão inválido. Dado esperado:",
+                    "[{",
+                    "    'id': UUID,",
+                    "    'dataCriacao': DataTime,",
+                    "    'numeroVersao': Integer",
+                    "}]"
+                ].join("\n"));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    _setContent = (dataArray) => {
+        let resultValidate = this._validDataArrayContent(dataArray);
+        if (!resultValidate) { return }
+
+        let popUpCardContainer = $(`
+            <div class="popup-card-container" id="popUpCardContainer">
+            </div>
+        `);
+
+        popUpCardContainer.append(dataArray.map(VALUE => {
+            let component = $(`
+            <div class="card" onClick="">
+                <div class="card-priority priority-1"></div>
+                <div class="card-subject">Versão: V${VALUE.numeroVersao}</div>
+                <div class="card-subject">Data: ${new Date(VALUE.dataCriacao).toLocaleDateString("pt-BR")}</div>
+                <div class="card-assignee">ID: ${VALUE.id}</div>
+            </div> 
+            `).on("click", () => this._onVersionClick(VALUE.id));
+
+            return component;
+        }));
+
+        popUpCardContainer.appendTo(this._popUpContent);
+
+        $("#popUpCardContainer").dxScrollView({
+            direction: 'vertical'
+        });
+    }
+
+    _cleanContent = () => {
+        let instance = this._componentInstanceModel.getInstanceProps("popup_select_version").getInstance();
+        instance.option("contentTemplate", () => {
+            let content = $(this._popUpMainContent);
+            this._popUpContent = content;
+            return content;
+        });
+    }
+
+    _initPopUpContent = async () => {
+        this._cleanContent();
+        this._showHideLoading(true);
+        let data = await this.popUpVersoesGetContent(this._popUpCurrentContentPage, this._popUpCurrentTakeContentePage);
+        this._setContent(data);
+        this._showHideLoading(false);
+    }
+
+    showHidePopUp = async (value) => {
+        this._componentInstanceModel.setInstanceValue("popup_select_version", value);
+        await this._initPopUpContent();
+    }
+
+    constructor(onPopUpOpen) {
+        this._onPopUpOpen = onPopUpOpen;
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version
+            "componentName": "dxPopup",
+            "instance": $('#popup_select_version').dxPopup({
+                width: 500,
+                height: 500,
+                visible: false,
+                title: 'Versões',
+                container: ".js-content",
+                hideOnOutsideClick: false,
+                showCloseButton: true,
+                enableBodyScroll: false,
+                resizeEnabled: false,
+                contentTemplate: () => {
+                    let content = $(this._popUpMainContent);
+                    this._popUpContent = content;
+                    return content;
+                }
+            }).dxPopup('instance'),
+            "tagName": "popup_select_version"
+        }));
+    }
+
+}
