@@ -73,7 +73,8 @@
 #text_string_regular_expression,
 #number_string_length_less,
 #number_string_length_greater,
-#number_numeric_multiple {
+#number_numeric_multiple,
+#popup_select_version_scrollContent {
     width: 100%;
 }
 
@@ -118,4 +119,61 @@
 .object-pattern-keys {
     display: flex;
     flex-direction: row;
+}
+
+.popup-select-version-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.dx-popup-wrapper>.dx-overlay-content {
+    background-color: #EEEEEE;
+}
+
+.popup-card-container {
+    width: 100%;
+}
+
+.card:hover {
+    background-color: rgba(0, 0, 0, .04);
+    border-radius: 0;
+    color: rgba(0, 0, 0, .87);
+}
+
+
+.card {
+    position: relative;
+    background-color: white;
+    box-sizing: border-box;
+    width: 96%;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: .5rem;
+}
+
+.card-subject {
+    padding-bottom: 10px;
+}
+
+.card-assignee {
+    opacity: 0.6;
+}
+
+.card-priority {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 5px;
+    width: 5px;
+    border-radius: 2px;
+    background: #86c285;
+}
+
+.priority-1 {
+    background: #adadad;
 }

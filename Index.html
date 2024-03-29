@@ -14,13 +14,6 @@
 </head>
 
 <body class="dx-viewport">
-    <!-- <div id="Teste">
-        <div class="card">
-            <div class="card-priority priority-1"></div>
-            <div class="card-subject">Report on the State of Engineering Dept</div>
-            <div class="card-assignee">Bart Arnaz</div>
-        </div>
-    </div> -->
     <div class="js-content">
         <div class="js-header">
             <div class="js-header-texts">
@@ -31,8 +24,7 @@
                 <div class="component" id="button_header_save_new_version"></div>
                 <div class="component" id="button_header_select_version"></div>
             </div>
-            <div id="popup_select_version">
-            </div>
+            <div id="popup_select_version"></div>
         </div>
         <div class="js-View-Config">
             <div class="js-View">
@@ -144,6 +136,33 @@
 
     <!-- DEV  -->
     <script type="module" src="jsonSchemaLib/js/JS_Main.js"></script>
+
+    <script>
+        window.onPopUpOpen = async (page, take) => {
+            const url = new URL('https://6155b9d4c06a340017b292ad.mockapi.io/api/v1/versions');
+            url.searchParams.append('page', page);
+            url.searchParams.append('limit', take);
+
+            // await new Promise((resolve) => {
+            //     setTimeout(function () {
+            //         resolve();
+            //     }, 3000);
+            // })
+
+            let result;
+            await $.ajax({
+                url: url,
+                method: "GET",
+                success: function (response) {
+                    result = response;
+                },
+                error: function (xhr, status, error) {
+                    debugger
+                }
+            });
+            return result;
+        }
+    </script>
 
 </body>
 

@@ -5,7 +5,7 @@ import { LOCAL_DATA } from "./LocalData.js";
 import "../../lib/DevExtreme/Lib/js/dx.all.js";
 import "../../lib/DevExtreme/Lib/js/localization/dx.messages.pt.js";
 
-const main = () => {
+const main = async () => {
     const configComponents = new ConfigComponents();
     const headerComponents = new HeaderComponents();
     const viewComponents = new ViewComponents();
@@ -13,33 +13,19 @@ const main = () => {
     viewComponents.treeView.setItems(LOCAL_DATA);
 
     headerComponents.btnSaveNewVersionClicked = (() => {
-
     });
 
-    headerComponents.getVersions = async (page, take) => {
-        const url = new URL('https://6155b9d4c06a340017b292ad.mockapi.io/api/v1/versions');
-        url.searchParams.append('page', page);
-        url.searchParams.append('limit', take);
+    headerComponents.setPopUpVersoesGetContent((() => {
+        let windowFunction = window.onPopUpOpen;
+        if (!windowFunction) {
+            throw new Error("[Erro] - [main] - Função 'onPopUpOpen' não definido.")
+        }
+        return windowFunction;
+    })());
 
-        await new Promise((resolve) => {
-            setTimeout(function () {
-                resolve();
-            }, 3000);
-        })
-
-        let result;
-        await $.ajax({
-            url: url,
-            method: "GET",
-            success: function (response) {
-                result = response;
-            },
-            error: function (xhr, status, error) {
-                debugger
-            }
-        });
-        return result;
-    }
+    headerComponents.setOnPopUpVersionClick((id) => {
+        console.log(id);
+    });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id, itemData.id_ref);
@@ -64,7 +50,6 @@ const main = () => {
             return;
         }
     }
-
 
     $(".dxScroll").dxScrollView({
         direction: 'vertical'
