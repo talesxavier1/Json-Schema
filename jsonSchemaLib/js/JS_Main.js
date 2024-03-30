@@ -1,6 +1,5 @@
 import { BaseNodeValueModel } from "./BaseModels.js";
 import { ConfigComponents, HeaderComponents, ViewComponents } from "./JSComponents.js";
-import { LOCAL_DATA } from "./LocalData.js";
 
 import "../../lib/DevExtreme/Lib/js/dx.all.js";
 import "../../lib/DevExtreme/Lib/js/localization/dx.messages.pt.js";
@@ -10,21 +9,32 @@ const main = async () => {
     const headerComponents = new HeaderComponents();
     const viewComponents = new ViewComponents();
 
-    viewComponents.treeView.setItems(LOCAL_DATA);
+    viewComponents.treeView.setItems([]);
 
     headerComponents.btnSaveNewVersionClicked = (() => {
+        console.log(viewComponents.treeView.getItems());
     });
 
     headerComponents.setPopUpVersoesGetContent((() => {
-        let windowFunction = window.onPopUpOpen;
+        let windowFunction = window.popUpVersoesGetContent;
         if (!windowFunction) {
-            throw new Error("[Erro] - [main] - Função 'onPopUpOpen' não definido.")
+            throw new Error("[Erro] - [main] - Função 'popUpVersoesGetContent' não definido. modelo 'async (page, take) =>{ }'")
         }
         return windowFunction;
     })());
 
-    headerComponents.setOnPopUpVersionClick((id) => {
-        console.log(id);
+    headerComponents.setOnPopUpVersionClick(async (id) => {
+        let windowFunction = window.popUpGetJsonContent;
+        if (!windowFunction) {
+            throw new Error("[Erro] - [main] - Função 'popUpGetJsonContent' não definido. modelo 'async (id) =>{ }'")
+        }
+        let result = await windowFunction(id);
+        headerComponents.setHeaderinfo({
+            "id": result.id,
+            "numeroVersao": result.numeroVersao
+        });
+        viewComponents.treeView.setItems(result.treeContent);
+        viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
     });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {

@@ -3,7 +3,6 @@ import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
 import { icons } from "./Consts.js";
 import { BaseNodeModel } from "./BaseModels.js";
-import { LOCAL_DATA } from "./LocalData.js";
 import { GUID } from "./guid.js";
 
 export class ConfigComponents {
@@ -932,8 +931,10 @@ export class HeaderComponents {
      */
     btnSaveNewVersionClicked = (event) => { };
 
+    //TODO documentar
     _popUpVersoes;
 
+    //TODO documentar
     setPopUpVersoesGetContent = (functionParam) => {
         if (typeof functionParam != "function") {
             throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesGetContent(functionParam) .")
@@ -941,6 +942,7 @@ export class HeaderComponents {
         this._popUpVersoes.popUpVersoesGetContent = functionParam;
     }
 
+    //TODO documentar
     setOnPopUpVersionClick = (functionParam) => {
         if (typeof functionParam != "function") {
             throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesOnClick(functionParam) .")
@@ -948,12 +950,19 @@ export class HeaderComponents {
         this._popUpVersoes.onVersionClick = functionParam;
     }
 
+    //TODO documentar
+    setHeaderinfo = ({ id, numeroVersao }) => {
+        this._componentInstanceModel.setInstanceValue("text_header_id", id)
+        this._componentInstanceModel.setInstanceValue("text_header_version", numeroVersao)
+    }
+
     constructor(popUpVersoesGetContent) {
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
             "instance": $('#text_header_version').dxTextBox({
                 label: "Versão",
-                labelMode: "static"
+                labelMode: "static",
+                readOnly: true,
             }).dxTextBox("instance"),
             "tagName": "text_header_version"
         }));
@@ -962,7 +971,8 @@ export class HeaderComponents {
             "componentName": "dxTextBox",
             "instance": $('#text_header_id').dxTextBox({
                 label: "ID",
-                labelMode: "static"
+                labelMode: "static",
+                readOnly: true,
             }).dxTextBox("instance"),
             "tagName": "text_header_id"
         }));
@@ -1349,6 +1359,11 @@ class TreeView {
         this._componentInstanceModel.setInstanceValue("treeView", value);
     }
 
+    //TODO documentar
+    getItems = () => {
+        return this._items;
+    }
+
     /**
      * Limpa a view.
      * @returns {void}
@@ -1391,6 +1406,7 @@ class TreeView {
         this._scrollFocusItem(nodeId);
     }
 
+    //TODO documentar
     buildJsonSchema = () => {
         let treeViewInstance = this._componentInstanceModel.getInstanceProps("treeView");
         treeViewInstance = treeViewInstance.getInstance();
@@ -1540,8 +1556,10 @@ class JsonViewer {
 }
 
 class JsonSchemaBuilder {
+    //TODO documentar
     _hierarchyItems;
 
+    //TODO documentar
     _buildByType = {
         "object": (nodeValue, children) => {
             let finalObject = {
@@ -1743,7 +1761,9 @@ class JsonSchemaBuilder {
         }
     }
 
+    //TODO documentar
     buildJsonSchema = () => {
+        if (this._hierarchyItems.length == 0) { return {} }
 
         let finalObject = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1762,7 +1782,7 @@ class JsonSchemaBuilder {
     }
 
     constructor(hierarchyItems) {
-        this._hierarchyItems = hierarchyItems;
+        this._hierarchyItems = Array.isArray(hierarchyItems) ? hierarchyItems : [];
     }
 }
 
@@ -1772,27 +1792,48 @@ class PopUpVersoes {
     */
     _componentInstanceModel = new ComponentInstanceModel();
 
+    //TODO documentar
     _popUpContent;
 
-    _popUpCurrentContentPage = 1;
+    //TODO documentar
+    _popUpCurrentContentPage;
 
-    _popUpCurrentTakeContentePage = 10;
+    //TODO documentar
+    _popUpDefaultContentPage = 1;
 
+    //TODO documentar
+    _popUpCurrentTakeContentePage;
+
+    //TODO documentar
+    _popUpDefaultTakeContentePage = 10;
+
+    //TODO documentar
+    _popUpCurrentCountContentePage = 0;
+
+    //TODO documentar
+    _popUpContentePageInitialized = false;
+
+    //TODO documentar
     _popUpMainContent = `
         <div id="popup_select_version_content" class="popup-select-version-content">
         </div>
     `;
 
+    //TODO documentar
     popUpVersoesGetContent = async (page, take) => { return [] };
 
+    //TODO documentar
     onVersionClick = (id) => { }
 
+    //TODO documentar
     _onVersionClick = (id) => {
         this.onVersionClick(id);
         this.showHidePopUp(false);
     }
 
+    //TODO documentar
     _showHideLoading = (value) => {
+        this._cleanContent();
         if (value) {
             $(`<div id="popup_select_version_loading"</div>`).dxLoadIndicator({
                 height: 60,
@@ -1804,33 +1845,57 @@ class PopUpVersoes {
         }
     }
 
+    //TODO documentar
     _validDataArrayContent = (dataArray) => {
-        for (let ITEM of dataArray) {
-            if (!ITEM.dataCriacao || !ITEM.id || !ITEM.numeroVersao) {
-                console.warn([
-                    "[AVISO] - [HeaderComponents] Valore para PopUp de versão inválido. Dado esperado:",
-                    "[{",
-                    "    'id': UUID,",
-                    "    'dataCriacao': DataTime,",
-                    "    'numeroVersao': Integer",
-                    "}]"
-                ].join("\n"));
-                return false;
+        let valid = true;
+
+        if (typeof dataArray != 'object') {
+            valid = false;
+        } else if (!dataArray.count || typeof dataArray.count != "number") {
+            valid = false;
+        } else if (!dataArray.data || !Array.isArray(dataArray.data)) {
+            valid = false;
+        } else {
+            for (let ITEM of dataArray.data) {
+                let dataCriacaoValid = (() => {
+                    if (typeof ITEM.dataCriacao != "string") { return false }
+                    let date = new Date(ITEM.dataCriacao);
+                    return date == "Invalid Date" ? false : true;
+                })();
+
+                let idValid = ["string", "number"].includes(typeof ITEM.id);
+
+                let numeroVersao = typeof ITEM.numeroVersao == "number";
+
+                valid = dataCriacaoValid && idValid && numeroVersao;
             }
         }
-        return true;
+
+        if (!valid) {
+            console.warn([
+                "[AVISO] - [HeaderComponents] Valore para PopUp de versão inválido. Dado esperado:",
+                `{`,
+                `  "count": int,`,
+                `  "data": [{`,
+                `      "id": string,`,
+                `      "dataCriacao": string,`,
+                `      "numeroVersao": int`,
+                `  }]`,
+                `}`
+            ].join("\n"));
+        }
+
+        return valid;
     }
 
-    _setContent = (dataArray) => {
-        let resultValidate = this._validDataArrayContent(dataArray);
-        if (!resultValidate) { return }
-
+    //TODO documentar
+    _setContent = (data) => {
         let popUpCardContainer = $(`
             <div class="popup-card-container" id="popUpCardContainer">
             </div>
         `);
 
-        popUpCardContainer.append(dataArray.map(VALUE => {
+        popUpCardContainer.append(data.map(VALUE => {
             let component = $(`
             <div class="card" onClick="">
                 <div class="card-priority priority-1"></div>
@@ -1850,29 +1915,58 @@ class PopUpVersoes {
         });
     }
 
+    //TODO documentar
     _cleanContent = () => {
-        let instance = this._componentInstanceModel.getInstanceProps("popup_select_version").getInstance();
-        instance.option("contentTemplate", () => {
-            let content = $(this._popUpMainContent);
-            this._popUpContent = content;
-            return content;
-        });
+        this._popUpContent.empty();
     }
 
-    _initPopUpContent = async () => {
+    //TODO documentar
+    _initPopUpContent = async (pageAction/* NEXT / PREVIOUS / NULL */) => {
+
         this._cleanContent();
         this._showHideLoading(true);
-        let data = await this.popUpVersoesGetContent(this._popUpCurrentContentPage, this._popUpCurrentTakeContentePage);
-        this._setContent(data);
-        this._showHideLoading(false);
+
+        let dataResult;
+        if (!pageAction) {
+            this._popUpCurrentContentPage = this._popUpDefaultContentPage;
+            this._popUpCurrentTakeContentePage = this._popUpDefaultTakeContentePage;
+            this._popUpContentePageInitialized = false;
+
+            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage, this._popUpCurrentTakeContentePage);
+            let resultValidate = this._validDataArrayContent(dataResult);
+            if (!resultValidate) { return; }
+
+        } else if (pageAction == "NEXT") {
+
+            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage + 1, this._popUpCurrentTakeContentePage);
+            let resultValidate = this._validDataArrayContent(dataResult);
+            if (!resultValidate || dataResult.data.length == 0) { return; }
+            this._popUpCurrentContentPage = this._popUpCurrentContentPage + 1;
+
+        } else if (pageAction == "PREVIOUS") {
+
+            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage - 1, this._popUpCurrentTakeContentePage);
+            let resultValidate = this._validDataArrayContent(dataResult);
+            if (!resultValidate || dataResult.data.length == 0) { return; }
+            this._popUpCurrentContentPage = this._popUpCurrentContentPage - 1;
+        }
+
+        this._popUpCurrentCountContentePage = dataResult.count;
+        this._cleanContent();
+        this._setContent(dataResult.data);
+        this._popUpContentePageInitialized = true;
     }
 
+    //TODO documentar
     showHidePopUp = async (value) => {
         this._componentInstanceModel.setInstanceValue("popup_select_version", value);
-        await this._initPopUpContent();
+        if (value) {
+            await this._initPopUpContent(null);
+        }
     }
 
     constructor(onPopUpOpen) {
+        let self = this;
         this._onPopUpOpen = onPopUpOpen;
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version
@@ -1891,7 +1985,33 @@ class PopUpVersoes {
                     let content = $(this._popUpMainContent);
                     this._popUpContent = content;
                     return content;
-                }
+                },
+                toolbarItems: [{ /* Voltar */
+                    widget: 'dxButton',
+                    toolbar: 'bottom',
+                    location: 'left',
+                    options: {
+                        icon: 'chevrondoubleleft',
+                        stylingMode: 'contained',
+                        async onClick() {
+                            if (self._popUpCurrentContentPage == 1) { return }
+                            await self._initPopUpContent("PREVIOUS");
+                        },
+                    },
+                }, { /* Avançar */
+                    widget: 'dxButton',
+                    toolbar: 'bottom',
+                    location: 'left',
+                    options: {
+                        icon: 'chevrondoubleright',
+                        stylingMode: 'contained',
+                        async onClick() {
+                            let maxPage = Number((self._popUpCurrentCountContentePage / self._popUpCurrentTakeContentePage).toFixed(0));
+                            if (maxPage == self._popUpCurrentContentPage || maxPage == 0) { return }
+                            await self._initPopUpContent("NEXT");
+                        },
+                    },
+                }]
             }).dxPopup('instance'),
             "tagName": "popup_select_version"
         }));

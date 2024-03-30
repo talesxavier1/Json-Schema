@@ -138,15 +138,16 @@
     <script type="module" src="jsonSchemaLib/js/JS_Main.js"></script>
 
     <script>
-        window.onPopUpOpen = async (page, take) => {
-            const url = new URL('https://6155b9d4c06a340017b292ad.mockapi.io/api/v1/versions');
-            url.searchParams.append('page', page);
-            url.searchParams.append('limit', take);
+        window.popUpVersoesGetContent = async (page, take) => {
+            const url = new URL('http://localhost:3500/version');
+
+            url.searchParams.append('_page', page);
+            url.searchParams.append('_per_page', take);
 
             // await new Promise((resolve) => {
             //     setTimeout(function () {
             //         resolve();
-            //     }, 3000);
+            //     }, 1000);
             // })
 
             let result;
@@ -160,7 +161,39 @@
                     debugger
                 }
             });
-            return result;
+
+            return {
+                "count": result.items,
+                "data": result.data
+            };
+        }
+
+        window.popUpGetJsonContent = async (id) => {
+            const url = new URL(`http://localhost:3500/content/${id}`);
+
+            // await new Promise((resolve) => {
+            //     setTimeout(function () {
+            //         resolve();
+            //     }, 100);
+            // })
+
+            let result;
+            await $.ajax({
+                url: url,
+                method: "GET",
+                success: function (response) {
+                    result = response;
+                },
+                error: function (xhr, status, error) {
+                    debugger
+                }
+            });
+
+            return {
+                "id": result.id,
+                "numeroVersao": result.numeroVersao,
+                "treeContent": result.treeContent
+            };
         }
     </script>
 
