@@ -9,10 +9,33 @@ const main = async () => {
     const headerComponents = new HeaderComponents();
     const viewComponents = new ViewComponents();
 
-    viewComponents.treeView.setItems([]);
+    window.setItems = (items, numeroVersao, id) => {
+        headerComponents.setHeaderinfo({
+            "id": id,
+            "numeroVersao": numeroVersao
+        });
+        viewComponents.treeView.setItems(items);
+    }
 
-    headerComponents.btnSaveNewVersionClicked = (() => {
-        console.log(viewComponents.treeView.getItems());
+    headerComponents.btnSaveNewVersionClicked = (async () => {
+        let functionParam = (() => {
+            let func = window.onBtnSaveClick;
+            if (!func) {
+                console.warn("[AVISO] -  [MAIN] Função onBtnSaveClick não fornecida.");
+            } else {
+                return func;
+            }
+            return async () => { }
+        })();
+        //TODO validar antes de chamar a função.
+
+        let builtJsonSchema = viewComponents.treeView.buildJsonSchema();
+        let treeContent = viewComponents.treeView.getItems();
+        await functionParam({
+            "id": builtJsonSchema["$id"],
+            "jsonSchema": builtJsonSchema,
+            "treeContent": treeContent
+        })
     });
 
     headerComponents.setPopUpVersoesGetContent((() => {
@@ -35,6 +58,8 @@ const main = async () => {
         });
         viewComponents.treeView.setItems(result.treeContent);
         viewComponents.jsonViewer.setJson(viewComponents.treeView.buildJsonSchema());
+        configComponents.clearConfigs();
+        configComponents.enabledConfigs(false);
     });
 
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {

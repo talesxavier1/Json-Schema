@@ -79,6 +79,64 @@ export class ConfigComponents {
         this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "cleanAll")();
     }
 
+    //TODO documentar
+    validConfigs = (builtObject) => {
+        let requiredListNotify = [];
+        if (!builtObject.text_description) {
+            requiredListNotify.push("Descrição");
+        }
+        if (!builtObject.text_name) {
+            requiredListNotify.push("Nome");
+        }
+        if (!builtObject.select_type) {
+            requiredListNotify.push("Tipo");
+        }
+
+        /* Tipo Array */
+        if (builtObject.select_type == "array" && !builtObject.select_array_type) {
+            requiredListNotify.push("Tipo de array");
+        }
+
+        if (builtObject.select_type == "string") {
+            if (builtObject.checkbox_string_regular_expression && !builtObject.text_string_regular_expression) {
+                requiredListNotify.push("Expressão");
+            }
+
+            if (builtObject.checkbox_string_format && !builtObject.select_string_format) {
+                requiredListNotify.push("Format");
+            }
+
+            if (builtObject.checkbox_string_length_greater && !builtObject.number_string_length_greater) {
+                requiredListNotify.push("Valor Tamanho máximo");
+            }
+
+            if (builtObject.checkbox_string_length_greater && builtObject.checkbox_string_length_less) {
+                if (builtObject.number_string_length_greater < builtObject.number_string_length_less) {
+                    DevExpress.ui.notify(`Campo Tamanho máximo não pode ser menor que Tamanho mínimo. `, 'error');
+                    return false;
+                }
+            }
+        }
+
+        if (["integer", "number"].includes(builtObject.select_type)) {
+            if (builtObject.checkbox_numeric_multiple && !builtObject.number_numeric_multiple) {
+                requiredListNotify.push("Valor múltiplo");
+            }
+
+
+            debugger;
+        }
+
+
+
+        if (requiredListNotify.length > 0) {
+            DevExpress.ui.notify(`Campo(s) ${requiredListNotify.join(", ")} obrigatório(s)`, 'error');
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * @constructor
      * Construtor da classe.
@@ -122,6 +180,7 @@ export class ConfigComponents {
                 onClick: (event) => {
                     let nodeId = this._node_id;
                     let builtObject = this._componentInstanceModel.getBuiltObject();
+                    if (!this.validConfigs(builtObject)) { return; }
 
                     this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "cleanAll")();
                     this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "enabledComponents")(false);
@@ -661,10 +720,7 @@ export class ConfigComponents {
             "instance": $('#list_enum_values').dxList({
                 selectByClick: false,
                 allowItemDeleting: true,
-                itemDeleteMode: 'static',
-                onItemClick: function (e) {
-                    DevExpress.ui.notify("The button was clicked");
-                }
+                itemDeleteMode: 'static'
             }).dxList('instance'),
             "tagName": "list_enum_values"
         }));
@@ -1507,6 +1563,8 @@ class TreeView {
             }).dxTreeView('instance'),
             "tagName": "treeView"
         }));
+
+        this.setItems([]);
     }
 }
 
