@@ -93,10 +93,36 @@ export class ConfigComponents {
         }
 
         /* Tipo Array */
-        if (builtObject.select_type == "array" && !builtObject.select_array_type) {
-            requiredListNotify.push("Tipo de array");
+        if (builtObject.select_type == "array") {
+            if (!builtObject.select_array_type) {
+                requiredListNotify.push("Tipo de array");
+            }
+
+            let minArray = builtObject?.number_array_min?.toString();
+            if (builtObject.checkbox_array_min) {
+                if (!minArray) {
+                    requiredListNotify.push("Array min");
+                }
+            }
+
+            let maxArray = builtObject?.number_array_max?.toString();
+            if (builtObject.checkbox_array_max) {
+                if (!maxArray) {
+                    requiredListNotify.push("Array max");
+                }
+                else if (maxArray == '0') {
+                    DevExpress.ui.notify(`Array max não pode ser zero.`, 'error');
+                    return false;
+                }
+            }
+
+            if (builtObject.checkbox_array_min && builtObject.checkbox_array_max && (Number(maxArray) < Number(minArray))) {
+                DevExpress.ui.notify(`Array max não pode ser menor que array min`, 'error');
+                return false;
+            }
         }
 
+        /* Tipo String */
         if (builtObject.select_type == "string") {
             if (builtObject.checkbox_string_regular_expression && !builtObject.text_string_regular_expression) {
                 requiredListNotify.push("Expressão");
@@ -118,16 +144,43 @@ export class ConfigComponents {
             }
         }
 
+        /* Tipos Integer e Number */
+        //TODO separar a validação de menor e menor igual maior e maior igual
+        // Number pode ter virgula fazendo possível um meior que 1 e menor que 1
         if (["integer", "number"].includes(builtObject.select_type)) {
             if (builtObject.checkbox_numeric_multiple && !builtObject.number_numeric_multiple) {
                 requiredListNotify.push("Valor múltiplo");
             }
 
+            let greater = builtObject.number_numeric_greater.toString();
+            let greaterSelect = builtObject.select_numeric_greater;
+            if (greaterSelect && !greater) {
+                requiredListNotify.push("Valor Maior que");
+            }
 
-            debugger;
+            let less = builtObject.number_numeric_less.toString();
+            let lessSelect = builtObject.select_numeric_less;
+            if (lessSelect && !less) {
+                requiredListNotify.push("Valor Menor que");
+            }
+
+            if (builtObject.select_numeric_greater && builtObject.select_numeric_less) {
+                if (greater == less && (lessSelect != "menor_ou_igual" || greaterSelect != "maior_ou_igual")) {
+                    DevExpress.ui.notify(`Maior que e Menor que não podem ser iguais`, 'error');
+                    return false;
+                } else if (Number(greater) < Number(less)) {
+                    DevExpress.ui.notify(`'Maior que' não pode ser menor que 'Menor que'`, 'error');
+                    return false;
+                }
+            }
         }
 
-
+        /* Tipo Object */
+        if (builtObject.select_type == "object") {
+            if (builtObject.checkbox_object_pattern_keys && !builtObject.text_object_pattern_keys) {
+                requiredListNotify.push("Pattern");
+            }
+        }
 
         if (requiredListNotify.length > 0) {
             DevExpress.ui.notify(`Campo(s) ${requiredListNotify.join(", ")} obrigatório(s)`, 'error');
@@ -387,21 +440,19 @@ export class ConfigComponents {
             "tagName": "select_array_type"
         }));
 
-        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_array_min_max
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_array_min
             "componentName": "dxCheckBox",
-            "instance": $("#checkbox_array_min_max").dxCheckBox({
+            "instance": $("#checkbox_array_min").dxCheckBox({
                 text: 'Max/Min',
                 focusStateEnabled: false,
                 iconSize: 20,
                 onValueChanged: (event) => {
-                    this._componentInstanceModel.setInstanceValue("number_array_max", 0);
                     this._componentInstanceModel.setInstanceValue("number_array_min", 0);
 
                     this._componentInstanceModel.disableEnableInstance("number_array_min");
-                    this._componentInstanceModel.disableEnableInstance("number_array_max");
                 }
             }).dxCheckBox("instance"),
-            "tagName": "checkbox_array_min_max"
+            "tagName": "checkbox_array_min"
         }));
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //number_array_min
@@ -410,9 +461,24 @@ export class ConfigComponents {
                 disabled: true,
                 label: "Min",
                 labelMode: "static",
-                min: 1
+                min: 0
             }).dxNumberBox("instance"),
             "tagName": "number_array_min"
+        }));
+
+        this._componentInstanceModel.addInstance(new InstanceProps({ //checkbox_array_max
+            "componentName": "dxCheckBox",
+            "instance": $("#checkbox_array_max").dxCheckBox({
+                text: 'Max/Min',
+                focusStateEnabled: false,
+                iconSize: 20,
+                onValueChanged: (event) => {
+                    this._componentInstanceModel.setInstanceValue("number_array_max", 0);
+
+                    this._componentInstanceModel.disableEnableInstance("number_array_max");
+                }
+            }).dxCheckBox("instance"),
+            "tagName": "checkbox_array_max"
         }));
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //number_array_max
@@ -797,7 +863,8 @@ export class ConfigComponents {
                 },
                 clearFields: () => {
                     this._componentInstanceModel.clearInstanceValue("select_array_type");
-                    this._componentInstanceModel.clearInstanceValue("checkbox_array_min_max");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_array_max");
+                    this._componentInstanceModel.clearInstanceValue("checkbox_array_min");
                     this._componentInstanceModel.clearInstanceValue("number_array_min");
                     this._componentInstanceModel.clearInstanceValue("number_array_max");
                     this._componentInstanceModel.clearInstanceValue("checkbox_array_unique_items");
@@ -807,7 +874,8 @@ export class ConfigComponents {
                         throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
                     }
                     this._componentInstanceModel.disableEnableInstance("select_array_type", booleanValue);
-                    this._componentInstanceModel.disableEnableInstance("checkbox_array_min_max", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_array_min", booleanValue);
+                    this._componentInstanceModel.disableEnableInstance("checkbox_array_max", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("number_array_min", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("number_array_max", booleanValue);
                     this._componentInstanceModel.disableEnableInstance("checkbox_array_unique_items", booleanValue);
@@ -1700,16 +1768,17 @@ class JsonSchemaBuilder {
 
             if (nodeValue.select_numeric_greater) {
                 if (nodeValue.select_numeric_greater == "maior_que") {
-                    finalObject.maximum = nodeValue.number_numeric_greater;
-                } else {
                     finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
-                }
-
-                if (nodeValue.select_numeric_greater == "menor_que") {
-                    finalObject.minimum = nodeValue.number_numeric_less;
-
                 } else {
+                    finalObject.maximum = nodeValue.number_numeric_greater;
+                }
+            }
+
+            if (nodeValue.select_numeric_less) {
+                if (nodeValue.select_numeric_less == "menor_que") {
                     finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+                } else {
+                    finalObject.minimum = nodeValue.number_numeric_less;
                 }
             }
 
@@ -1738,16 +1807,17 @@ class JsonSchemaBuilder {
 
             if (nodeValue.select_numeric_greater) {
                 if (nodeValue.select_numeric_greater == "maior_que") {
-                    finalObject.maximum = nodeValue.number_numeric_greater;
-                } else {
                     finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
-                }
-
-                if (nodeValue.select_numeric_greater == "menor_que") {
-                    finalObject.minimum = nodeValue.number_numeric_less;
-
                 } else {
+                    finalObject.maximum = nodeValue.number_numeric_greater;
+                }
+            }
+
+            if (nodeValue.select_numeric_less) {
+                if (nodeValue.select_numeric_less == "menor_que") {
                     finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+                } else {
+                    finalObject.minimum = nodeValue.number_numeric_less;
                 }
             }
 
@@ -1757,7 +1827,6 @@ class JsonSchemaBuilder {
                     finalObject.enum = items;
                 }
             }
-
             return finalObject;
         },
         "array": (nodeValue, children) => {
@@ -1773,13 +1842,12 @@ class JsonSchemaBuilder {
                 })()
             }
 
-            if (nodeValue.checkbox_array_min_max) {
-                if (nodeValue.number_array_max) {
-                    finalObject.maxItems = nodeValue.number_array_max;
-                }
-                if (nodeValue.number_array_min) {
-                    finalObject.minItems = nodeValue.number_array_min
-                }
+            if (nodeValue.checkbox_array_min) {
+                finalObject.minItems = nodeValue.number_array_min
+            }
+
+            if (nodeValue.checkbox_array_max) {
+                finalObject.maxItems = nodeValue.number_array_max;
             }
 
             if (nodeValue.checkbox_array_unique_items) {

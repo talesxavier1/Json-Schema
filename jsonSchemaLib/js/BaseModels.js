@@ -112,11 +112,11 @@ export class BaseNodeValueModel {
      */
     select_array_type = null;
 
-    /**
-     * Indica se campo array tem quantidade minima ou máxima de itens.
-     * @type {boolean}
-     */
-    checkbox_array_min_max = false;
+    //TODO documentar
+    checkbox_array_min = false;
+
+    //TODO documentar
+    checkbox_array_max = false;
 
     /**
      * Quantidade mínima de itens no array.
