@@ -53,7 +53,8 @@
 .js-config-main-props,
 .js-config-object-props,
 .js-config-array-props,
-.js-config-enum-props {
+.js-config-enum-props,
+.js-config-array-props-min-max {
     display: flex;
     flex-direction: column;
 }
@@ -112,11 +113,15 @@
     width: 115px;
 }
 
-#checkbox_additional_properties {
+#checkbox_additional_properties,
+#number_array_min,
+#number_array_max {
     width: 100%;
 }
 
-.object-pattern-keys {
+.object-pattern-keys,
+.js-config-array-props-min,
+.js-config-array-props-max {
     display: flex;
     flex-direction: row;
 }
