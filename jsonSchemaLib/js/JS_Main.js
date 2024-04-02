@@ -5,10 +5,16 @@ import "../../lib/DevExtreme/Lib/js/dx.all.js";
 import "../../lib/DevExtreme/Lib/js/localization/dx.messages.pt.js";
 
 const main = async () => {
+    //TODO documentar
     const configComponents = new ConfigComponents();
+
+    //TODO documentar
     const headerComponents = new HeaderComponents();
+
+    //TODO documentar
     const viewComponents = new ViewComponents();
 
+    //TODO documentar
     window.setItems = (items, numeroVersao, id) => {
         headerComponents.setHeaderinfo({
             "id": id,
@@ -17,6 +23,7 @@ const main = async () => {
         viewComponents.treeView.setItems(items);
     }
 
+    //TODO documentar
     headerComponents.btnSaveNewVersionClicked = (async () => {
         let functionParam = (() => {
             let func = window.onBtnSaveClick;
@@ -38,6 +45,7 @@ const main = async () => {
         })
     });
 
+    //TODO documentar
     headerComponents.setPopUpVersoesGetContent((() => {
         let windowFunction = window.popUpVersoesGetContent;
         if (!windowFunction) {
@@ -46,6 +54,7 @@ const main = async () => {
         return windowFunction;
     })());
 
+    //TODO documentar
     headerComponents.setOnPopUpVersionClick(async (id) => {
         let windowFunction = window.popUpGetJsonContent;
         if (!windowFunction) {
@@ -62,14 +71,17 @@ const main = async () => {
         configComponents.enabledConfigs(false);
     });
 
+    //TODO documentar
     viewComponents.treeView.onNodeClicked = ({ itemData }) => {
         configComponents.setNodeObject(Object.assign(new BaseNodeValueModel(), itemData.node_value), itemData.id, itemData.id_ref);
     };
 
+    //TODO documentar
     configComponents.onConfirmClick = ({ event, nodeId, nodeObject }) => {
         viewComponents.treeView.updateItem({ nodeId, nodeObject });
     }
 
+    //TODO documentar
     viewComponents.onTabChanged = (dataSource) => {
         if (dataSource.id == "jsonRendererContainer") {
             configComponents.hideShowConfigs(false);
@@ -86,9 +98,12 @@ const main = async () => {
         }
     }
 
+    //TODO documentar
     $(".dxScroll").dxScrollView({
         direction: 'vertical'
     });
+
+    //TODO documentar
     DevExpress.localization.locale(navigator.language);
 };
 

@@ -2,7 +2,7 @@ import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
 import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
 import { icons } from "./Consts.js";
-import { BaseNodeModel } from "./BaseModels.js";
+import { BaseNodeModel, BaseNodeValueModel } from "./BaseModels.js";
 import { GUID } from "./guid.js";
 
 export class ConfigComponents {
@@ -58,7 +58,12 @@ export class ConfigComponents {
         }
     }
 
-    //TODO documentar
+    /**
+     * Esconde ou exibe o painel de configurações com base no parâmetro visible passado.
+     * @param {boolean} visible 
+     * @throws lança erro caso o parâmetro passado não seja boolean.
+     * @returns {void}
+     */
     hideShowConfigs = (visible) => {
         if (typeof visible != "boolean") {
             throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
@@ -66,7 +71,12 @@ export class ConfigComponents {
         this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "configVisible")(visible);
     }
 
-    //TODO documentar
+    /**
+    * Habilita ou desabilita todos os componentes do painel de configurações com base no valor de 'enabled' passado.
+    * @param {boolean} enabled 
+    * @throws lança erro caso o parâmetro passado não seja boolean.
+    * @returns {void}
+    */
     enabledConfigs = (enabled) => {
         if (typeof enabled != "boolean") {
             throw new Error(`[ERRO]-[ConfigComponents] Parâmetro inválido.`);
@@ -74,12 +84,19 @@ export class ConfigComponents {
         this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "enabledComponents")(enabled);
     }
 
-    //TODO documentar
+    /**
+     * limpa todos os campos do painel config.
+     * @returns {void}
+     */
     clearConfigs = () => {
         this._componentInstanceModel.getFunction("GLOBAL_CONFIG_FUNCTIONS", "cleanAll")();
     }
 
-    //TODO documentar
+    /**
+     * Recebe um objeto BaseNodeValueModel e executa validações de campos com base no select_type.
+     * @param {BaseNodeValueModel} builtObject 
+     * @returns {boolean}
+     */
     validConfigs = (builtObject) => {
         let requiredListNotify = [];
         if (!builtObject.text_description) {

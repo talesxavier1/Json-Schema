@@ -112,10 +112,16 @@ export class BaseNodeValueModel {
      */
     select_array_type = null;
 
-    //TODO documentar
+    /**
+     * Indica se o array possui valor mínimo de componentes
+     * @type {boolean}
+     */
     checkbox_array_min = false;
 
-    //TODO documentar
+    /**
+     * Indica se o array possui valor máximo de componentes
+     * @type {boolean}
+     */
     checkbox_array_max = false;
 
     /**
@@ -142,22 +148,40 @@ export class BaseNodeValueModel {
      */
     checkbox_string_regular_expression = false;
 
-    //TODO documentar
+    /**
+     * Indica se a string tem um formato expecífico. 
+     * @type {boolean}
+     */
     checkbox_string_format = false;
 
-    //TODO documentar
+    /**
+     * Indica o formato selecionado para a string
+     * @type {(null|"date-time"|"time"|"date"|"duration"|"email"|"idn-email"|"hostname"|"idn-hostname"|"ipv4"|"ipv6"|"uuid"|"uri"|"uri-reference"|"iri"|"iri-reference"|"uri-template"|"json-pointer"|"regex")}
+     */
     select_string_format = null;
 
-    //TODO documentar
+    /**
+     * Indica se a string possui tamanho máximo.
+     * @type {boolean}
+     */
     checkbox_string_length_greater = false;
 
-    //TODO documentar
+    /**
+     * Indica o tamanho máximo da string.
+     * @type {number}
+     */
     number_string_length_greater = 0;
 
-    //TODO documentar
+    /**
+     * Indica se a string possui tamanho mínimo.
+     * @type {boolean}
+     */
     checkbox_string_length_less = false;
 
-    //TODO documentar
+    /**
+     * Tamanho mínimo da string.
+     * @type {number}
+     */
     number_string_length_less = 0;
 
     /**
@@ -190,10 +214,16 @@ export class BaseNodeValueModel {
      */
     number_numeric_less = 0;
 
-    //TODO Documentar
+    /**
+     * Indica se o componente do tipo number ou integer deve receber apenas números múltiplos.
+     * @type {boolean}
+     */
     checkbox_numeric_multiple = false;
 
-    //TODO documentar
+    /**
+     * Valor para numero múltiplo do componente
+     * @type {number}
+     */
     number_numeric_multiple = 0;
 
     /**
@@ -202,10 +232,16 @@ export class BaseNodeValueModel {
      */
     list_enum_values = [];
 
-    //TODO documentar
+    /**
+     * Indica se o componente do tipo object deve aceitar apenas chaves com um padrão expecífico.
+     * @type {boolean}
+     */
     checkbox_object_pattern_keys = false;
 
-    //TODO documentar
+    /**
+     * Padrão que o as chaves do object devem seguir.
+     * @type {string}
+     */
     text_object_pattern_keys = "";
 
     constructor() { }
