@@ -247,3 +247,20 @@ export class BaseNodeValueModel {
     constructor() { }
 }
 
+export class BaseTabModel {
+
+    //TODO documentar
+    id = "";
+
+    //TODO documentar
+    text = "";
+
+    //TODO documentar
+    icon = "";
+
+    constructor({ id, text, icon }) {
+        this.id = id;
+        this.text = text;
+        this.icon = icon;
+    }
+}
