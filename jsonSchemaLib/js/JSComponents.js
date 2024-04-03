@@ -1069,10 +1069,17 @@ export class HeaderComponents {
      */
     btnSaveNewVersionClicked = (event) => { };
 
-    //TODO documentar
+    /**
+     * Instância do PopUpVersoes.
+     * @type {PopUpVersoes}
+     */
     _popUpVersoes;
 
-    //TODO documentar
+    /**
+     * Seta uma função na instância de PopUpVersoes para ser executada quando o conteúdo do popup iniciar a renderização.
+     * @param {function} functionParam Função que deve ser executada.
+     * @returns {void}
+     */
     setPopUpVersoesGetContent = (functionParam) => {
         if (typeof functionParam != "function") {
             throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesGetContent(functionParam) .")
@@ -1080,7 +1087,11 @@ export class HeaderComponents {
         this._popUpVersoes.popUpVersoesGetContent = functionParam;
     }
 
-    //TODO documentar
+    /**
+     * Seta uma função na instância de PopUpVersoes para ser executada quando a versão é clicada.
+     * @param {function} functionParam Função que deve ser executada.
+     * @returns {void}
+     */
     setOnPopUpVersionClick = (functionParam) => {
         if (typeof functionParam != "function") {
             throw new Error("[Erro] - [HeaderComponents] - Parâmetro inválido setPopUpVersoesOnClick(functionParam) .")
@@ -1088,13 +1099,18 @@ export class HeaderComponents {
         this._popUpVersoes.onVersionClick = functionParam;
     }
 
-    //TODO documentar
+    /**
+     * Função popula os campos Id e Versão do header.
+     * @param {object} param
+     * @param {string} param.id Valor para o campo id do heade.
+     * @param {string} param.numeroVersao Valor para Número da versão do header.
+     */
     setHeaderinfo = ({ id, numeroVersao }) => {
         this._componentInstanceModel.setInstanceValue("text_header_id", id)
         this._componentInstanceModel.setInstanceValue("text_header_version", numeroVersao)
     }
 
-    constructor(popUpVersoesGetContent) {
+    constructor() {
         this._componentInstanceModel.addInstance(new InstanceProps({ //text_header_version
             "componentName": "dxTextBox",
             "instance": $('#text_header_version').dxTextBox({
@@ -1141,7 +1157,7 @@ export class HeaderComponents {
             "tagName": "button_header_select_version"
         }));
 
-        this._popUpVersoes = new PopUpVersoes(popUpVersoesGetContent);
+        this._popUpVersoes = new PopUpVersoes();
 
     }
 }
@@ -1369,27 +1385,8 @@ class TreeView {
                 return itensArray;
             })(finalItems);
 
-            //TODO criar validação de pattern preenchido ou não
-
             return finalItems;
         }
-
-        //TODO criar reviewString
-
-        //tratar a seleção do tamanho mínimo e máxmo
-        //Preenchido ou não
-        //minimo maior que máximo (criar aviso.)
-
-        //Validar expressão regular
-        //preenchido ou não
-
-        //validar string format
-        //preenchido ou não
-
-        //TODO criar validaçoes numeric
-        // validar se multiplo foi preenchido
-        //validar se maior foi preenchido
-        //validar se menor foi preenchido
 
         /**
          * Função que valida e aplica as regras dos outros itens. 
@@ -1510,7 +1507,10 @@ class TreeView {
         this._componentInstanceModel.setInstanceValue("treeView", value);
     }
 
-    //TODO documentar
+    /**
+     * Retorna os itens atuais da treeview.
+     * @returns {Array<BaseNodeModel>}
+     */
     getItems = () => {
         return this._items;
     }
@@ -1557,7 +1557,10 @@ class TreeView {
         this._scrollFocusItem(nodeId);
     }
 
-    //TODO documentar
+    /**
+     * Função executa o build do JsonSchema.
+     * @returns {object} JsonSchema final
+     */
     buildJsonSchema = () => {
         if (!this.validCurrentItems()) { return {}; }
 
@@ -1713,10 +1716,16 @@ class JsonViewer {
 }
 
 class JsonSchemaBuilder {
-    //TODO documentar
+    /**
+     * Itens do treeview organizados em hierarquia.
+     * @type {object}
+     */
     _hierarchyItems;
 
-    //TODO documentar
+    /**
+     * Objecto com funções para montar as propriedades de cada tipo no jsonSchema.
+     * @type {object}
+     */
     _buildByType = {
         "object": (nodeValue, children) => {
             let finalObject = {
@@ -1918,7 +1927,10 @@ class JsonSchemaBuilder {
         }
     }
 
-    //TODO documentar
+    /**
+     * Função faz a montagem do jsonSchema.
+     * @returns {object} JsonSchema final.
+     */
     buildJsonSchema = () => {
         if (this._hierarchyItems.length == 0) { return {} }
 
@@ -1945,50 +1957,106 @@ class JsonSchemaBuilder {
 
 class PopUpVersoes {
     /**
-      * @private
+    * @private
     */
     _componentInstanceModel = new ComponentInstanceModel();
 
-    //TODO documentar
+    /**
+     * Instância do conteúdo atual do popup
+     * @type {HTMLElement}
+     * @private
+     */
     _popUpContent;
 
-    //TODO documentar
+    /**
+     * Número da página atual do popup.
+     * @type {integer}
+     * @private
+     */
     _popUpCurrentContentPage;
 
-    //TODO documentar
+    /**
+     * Número da página padrão do popup.
+     * @type {integer}
+     * @private
+     */
     _popUpDefaultContentPage = 1;
 
-    //TODO documentar
+    /**
+     * Take atual do popup.
+     * @type {integer}
+     * @private
+     */
     _popUpCurrentTakeContentePage;
 
-    //TODO documentar
+    /**
+     * Take padrão do popup.
+     * @type {integer}
+     * @private
+     */
     _popUpDefaultTakeContentePage = 10;
 
-    //TODO documentar
+    /**
+     * Count atual do conteúdo do popup.
+     * @type {integer}
+     * @private
+     */
     _popUpCurrentCountContentePage = 0;
 
-    //TODO documentar
-    _popUpContentePageInitialized = false;
-
-    //TODO documentar
+    /**
+     * Conteúdo inicial do popup.
+     * @type {string}
+     * @private
+     */
     _popUpMainContent = `
         <div id="popup_select_version_content" class="popup-select-version-content">
         </div>
     `;
 
-    //TODO documentar
+    /**
+     * Função fornecida para a busca de conteúdo que deve ser renderizado no popup.
+     * @param {integer} page 
+     * @param {integer} take 
+     * @returns {Array<object>}
+     */
     popUpVersoesGetContent = async (page, take) => { return [] };
 
-    //TODO documentar
+    /**
+     * Função executada quando o popup busca o conteúdo que deve ser apresentado.
+     * @param {integer} page 
+     * @param {integer} take 
+     * @returns {Array<object>}
+     * @private
+     */
+    _popUpVersoesGetContent = async (page, take) => {
+        let result = await this.popUpVersoesGetContent(page, take);
+        if (this._validDataArrayContent(result)) {
+            return result
+        }
+        return [];
+    };
+
+    /**
+     * Função fornecida para ser executada quando a versão do popup é clacada.
+     * @param {string} id 
+     */
     onVersionClick = (id) => { }
 
-    //TODO documentar
+    /**
+     * Função executada quando uma versão do popup é clicada.
+     * @param {string} id 
+     * @private
+     */
     _onVersionClick = (id) => {
         this.onVersionClick(id);
         this.showHidePopUp(false);
     }
 
-    //TODO documentar
+    /**
+     * Função mostra ou esconde o popup.
+     * @param {boolean} value 
+     * @private
+     */
     _showHideLoading = (value) => {
         this._cleanContent();
         if (value) {
@@ -2002,7 +2070,12 @@ class PopUpVersoes {
         }
     }
 
-    //TODO documentar
+    /**
+     * Função valida se o array está no formato esperado.
+     * @param {Array<object>} dataArray 
+     * @returns {boolean}
+     * @private
+     */
     _validDataArrayContent = (dataArray) => {
         let valid = true;
 
@@ -2045,25 +2118,34 @@ class PopUpVersoes {
         return valid;
     }
 
-    //TODO documentar
+    /**
+     * Monta o conteúdo do popup.
+     * @param {Array<object>} data;
+     * @returns {void}
+     * @private
+     */
     _setContent = (data) => {
         let popUpCardContainer = $(`
             <div class="popup-card-container" id="popUpCardContainer">
             </div>
         `);
 
-        popUpCardContainer.append(data.map(VALUE => {
-            let component = $(`
-            <div class="card" onClick="">
-                <div class="card-priority priority-1"></div>
-                <div class="card-subject">Versão: V${VALUE.numeroVersao}</div>
-                <div class="card-subject">Data: ${new Date(VALUE.dataCriacao).toLocaleDateString("pt-BR")}</div>
-                <div class="card-assignee">ID: ${VALUE.id}</div>
-            </div> 
-            `).on("click", () => this._onVersionClick(VALUE.id));
+        if (data.length > 0) {
+            popUpCardContainer.append(data.map(VALUE => {
+                let component = $(`
+                <div class="card" onClick="">
+                    <div class="card-priority priority-1"></div>
+                    <div class="card-subject">Versão: V${VALUE.numeroVersao}</div>
+                    <div class="card-subject">Data: ${new Date(VALUE.dataCriacao).toLocaleDateString("pt-BR")}</div>
+                    <div class="card-assignee">ID: ${VALUE.id}</div>
+                </div> 
+                `).on("click", () => this._onVersionClick(VALUE.id));
 
-            return component;
-        }));
+                return component;
+            }));
+        } else {
+            popUpCardContainer.append(`<span>SEM CONTEÚDO.</span>`)
+        }
 
         popUpCardContainer.appendTo(this._popUpContent);
 
@@ -2072,12 +2154,20 @@ class PopUpVersoes {
         });
     }
 
-    //TODO documentar
+    /**
+     * Limpa o conteúdo do popup.
+     * @returns {void}
+     * @private
+     */
     _cleanContent = () => {
         this._popUpContent.empty();
     }
 
-    //TODO documentar
+    /**
+     * Inicia o conteúdo do popUp e faz a paginação.
+     * @param {"NEXT"|"PREVIOUS"|null} pageAction 
+     * @private
+     */
     _initPopUpContent = async (pageAction/* NEXT / PREVIOUS / NULL */) => {
 
         this._cleanContent();
@@ -2087,34 +2177,25 @@ class PopUpVersoes {
         if (!pageAction) {
             this._popUpCurrentContentPage = this._popUpDefaultContentPage;
             this._popUpCurrentTakeContentePage = this._popUpDefaultTakeContentePage;
-            this._popUpContentePageInitialized = false;
 
-            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage, this._popUpCurrentTakeContentePage);
-            let resultValidate = this._validDataArrayContent(dataResult);
-            if (!resultValidate) { return; }
-
+            dataResult = await this._popUpVersoesGetContent(this._popUpCurrentContentPage, this._popUpCurrentTakeContentePage);
         } else if (pageAction == "NEXT") {
-
-            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage + 1, this._popUpCurrentTakeContentePage);
-            let resultValidate = this._validDataArrayContent(dataResult);
-            if (!resultValidate || dataResult.data.length == 0) { return; }
+            dataResult = await this._popUpVersoesGetContent(this._popUpCurrentContentPage + 1, this._popUpCurrentTakeContentePage);
             this._popUpCurrentContentPage = this._popUpCurrentContentPage + 1;
-
         } else if (pageAction == "PREVIOUS") {
-
-            dataResult = await this.popUpVersoesGetContent(this._popUpCurrentContentPage - 1, this._popUpCurrentTakeContentePage);
-            let resultValidate = this._validDataArrayContent(dataResult);
-            if (!resultValidate || dataResult.data.length == 0) { return; }
+            dataResult = await this._popUpVersoesGetContent(this._popUpCurrentContentPage - 1, this._popUpCurrentTakeContentePage);
             this._popUpCurrentContentPage = this._popUpCurrentContentPage - 1;
         }
 
         this._popUpCurrentCountContentePage = dataResult.count;
         this._cleanContent();
         this._setContent(dataResult.data);
-        this._popUpContentePageInitialized = true;
     }
 
-    //TODO documentar
+    /**
+     * Função acionada quando o popup deve ser renderizado.
+     * @param {boolean} value 
+     */
     showHidePopUp = async (value) => {
         this._componentInstanceModel.setInstanceValue("popup_select_version", value);
         if (value) {
@@ -2122,9 +2203,8 @@ class PopUpVersoes {
         }
     }
 
-    constructor(onPopUpOpen) {
+    constructor() {
         let self = this;
-        this._onPopUpOpen = onPopUpOpen;
 
         this._componentInstanceModel.addInstance(new InstanceProps({ //popup_select_version
             "componentName": "dxPopup",

@@ -249,15 +249,30 @@ export class BaseNodeValueModel {
 
 export class BaseTabModel {
 
-    //TODO documentar
+    /**
+     * Id da tab.
+     * @type {string} 
+     */
     id = "";
 
-    //TODO documentar
+    /**
+     * Texto de exibição da tab.
+     * @type {string} 
+     */
     text = "";
 
-    //TODO documentar
+    /**
+     * Icone da tab
+     * @type {string} 
+     */
     icon = "";
 
+    /**
+     * @param {object} param
+     * @param {string} id Id da tab.
+     * @param {string} text Texto de exibição da tab.
+     * @param {string} icon Icone da aba.
+     */
     constructor({ id, text, icon }) {
         this.id = id;
         this.text = text;
