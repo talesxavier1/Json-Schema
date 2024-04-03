@@ -1,8 +1,6 @@
 import { BaseNodeModel, BaseNodeValueModel, BaseTabModel } from "./BaseModels.js";
 import { ConfigComponents, HeaderComponents, ViewComponents } from "./JSComponents.js";
 
-import "../../lib/DevExtreme/Lib/js/dx.all.js";
-import "../../lib/DevExtreme/Lib/js/localization/dx.messages.pt.js";
 
 const main = async () => {
 
