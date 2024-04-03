@@ -1,3 +1,7 @@
+@import url("./lib/DevExtreme/Lib/css/dx.material.blue.light.css");
+@import url("./jsonSchemaLib/css/JsonSchema.css");
+@import url("./jsonSchemaLib/css/Components.css");
+
 * {
     padding: 0;
     border: 0;
