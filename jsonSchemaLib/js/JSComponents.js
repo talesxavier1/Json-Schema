@@ -2,7 +2,7 @@ import { ComponentInstanceModel } from "./ComponentInstanceModel.js";
 import { InstanceProps } from "./InstanceProps.js"
 import { FunctionProps } from "./FunctionProps.js";
 import { icons } from "./Consts.js";
-import { BaseNodeModel, BaseNodeValueModel } from "./BaseModels.js";
+import { BaseNodeModel, BaseNodeValueModel, BaseTabModel } from "./BaseModels.js";
 import { GUID } from "./guid.js";
 
 export class ConfigComponents {
@@ -162,8 +162,6 @@ export class ConfigComponents {
         }
 
         /* Tipos Integer e Number */
-        //TODO separar a validação de menor e menor igual maior e maior igual
-        // Number pode ter virgula fazendo possível um meior que 1 e menor que 1
         if (["integer", "number"].includes(builtObject.select_type)) {
             if (builtObject.checkbox_numeric_multiple && !builtObject.number_numeric_multiple) {
                 requiredListNotify.push("Valor múltiplo");
@@ -180,22 +178,18 @@ export class ConfigComponents {
             if (lessSelect && !less) {
                 requiredListNotify.push("Valor Menor que");
             }
-
-            if (builtObject.select_numeric_greater && builtObject.select_numeric_less) {
-                if (greater == less && (lessSelect != "menor_ou_igual" || greaterSelect != "maior_ou_igual")) {
-                    DevExpress.ui.notify(`Maior que e Menor que não podem ser iguais`, 'error');
-                    return false;
-                } else if (Number(greater) < Number(less)) {
-                    DevExpress.ui.notify(`'Maior que' não pode ser menor que 'Menor que'`, 'error');
-                    return false;
-                }
-            }
         }
 
         /* Tipo Object */
         if (builtObject.select_type == "object") {
             if (builtObject.checkbox_object_pattern_keys && !builtObject.text_object_pattern_keys) {
                 requiredListNotify.push("Pattern");
+            }
+        }
+
+        if (builtObject.select_type == "enum") {
+            if (builtObject.list_enum_values.length == 0) {
+                requiredListNotify.push("Valores para enum.");
             }
         }
 
@@ -808,6 +802,9 @@ export class ConfigComponents {
             "tagName": "list_enum_values"
         }));
 
+        $("#dxScroll_config").dxScrollView({
+            direction: 'vertical'
+        });
         // ==================================================================================================================== //
 
 
@@ -1168,15 +1165,10 @@ export class ViewComponents {
     */
     treeView = new TreeView();
 
-    /**
-     * @typedef {Object} DataSource
-     * @property {string} id - O id da aba.
-     * @property {string} text - O texto de descrição da aba.
-     * @property {string} icon - O ícone da aba.
-     */
+
     /**
      * Busca a aba atual.
-     * @returns {DataSource} Informações da aba atual.
+     * @returns {BaseTabModel} Informações da aba atual.
      */
     getCurrentTab = () => {
         return this._componentInstanceModel.getInstanceValue("tabTreeViewJsonSchema");
@@ -1184,7 +1176,7 @@ export class ViewComponents {
 
     /**
      * Evento chamado quando a aba muda.
-     * @param {DataSource} dataSource Informações da aba atual.
+     * @param {BaseTabModel} dataSource Informações da aba atual.
      */
     onTabChanged = (dataSource) => { }
 
@@ -1197,16 +1189,16 @@ export class ViewComponents {
                 showNavButtons: false,
                 focusStateEnabled: false,
                 dataSource: [
-                    {
+                    new BaseTabModel({
                         id: "treeView",
                         text: 'Tree View',
                         icon: 'hierarchy',
-                    },
-                    {
+                    }),
+                    new BaseTabModel({
                         id: "jsonRendererContainer",
                         text: 'Json Schema View',
                         icon: "codeblock",
-                    }
+                    }),
                 ],
                 orientation: "horizontal",
                 stylingMode: "secondary",
@@ -1277,7 +1269,7 @@ class TreeView {
     }
 
     /**
-     * Função valida regras específicas com base no tipo do item.
+     * Função faz a revisão das regras específicas de cada tipo de node.
      * @param {Array<BaseNodeModel>} itemsParam 
      * @returns {Array<BaseNodeModel>}
      * @private
@@ -1488,6 +1480,24 @@ class TreeView {
         return finalItems;
     }
 
+    validCurrentItems = () => {
+        let itensSemTipo = this._items.filter(VALUE => !VALUE.node_value.select_type);
+        let arraySemSubTipo = this._items.filter(VALUE => VALUE.node_value.select_type == "array" && !VALUE.node_value.select_array_type);
+
+        if (itensSemTipo.length > 0) {
+            this._scrollFocusItem(itensSemTipo[0].id);
+            DevExpress.ui.notify(`Item sem tipo definido.`, 'error');
+            return false;
+        }
+
+        if (arraySemSubTipo.length > 0) {
+            this._scrollFocusItem(arraySemSubTipo[0].id);
+            DevExpress.ui.notify(`Array sem subtipo definido.`, 'error');
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Função que seta os itens e atualiza o treeView.
      * @param {Array<BaseNodeModel>} items
@@ -1549,6 +1559,8 @@ class TreeView {
 
     //TODO documentar
     buildJsonSchema = () => {
+        if (!this.validCurrentItems()) { return {}; }
+
         let treeViewInstance = this._componentInstanceModel.getInstanceProps("treeView");
         treeViewInstance = treeViewInstance.getInstance();
         let hierarchyItems = treeViewInstance.getNodes();
@@ -1575,8 +1587,10 @@ class TreeView {
         this._componentInstanceModel.addFunction(new FunctionProps({ //nodeAddButtonClicked
             "functionDefinition": (event) => {
                 let items = JSON.parse(JSON.stringify(this._items));
-                items.push(new BaseNodeModel(event.itemNodeId));
+                let newItem = new BaseNodeModel(event.itemNodeId)
+                items.push(newItem);
                 this.setItems(items);
+                this._scrollFocusItem(newItem.id);
             },
             "tagName": "nodeAddButtonClicked"
         }));
