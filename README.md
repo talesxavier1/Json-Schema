@@ -32,13 +32,13 @@ Como resultado, temos uma interfaca que permite a criação de JsonSchemas com b
 <h3>Imagens interface final.</h3>
 
 - Layout inicial. </br>
-        <img src="https://github.com/talesxavier1/Arquivos/blob/dev/JsonSchema/prints/layout%20inicial.jpg?raw=true">
+        <img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/prints/layout%20inicial.jpg?raw=true">
 - Layout de edição. </br>
-        <img src="https://github.com/talesxavier1/Arquivos/blob/dev/JsonSchema/prints/layout%20de%20edi%C3%A7%C3%A3o.jpg?raw=true">
+        <img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/prints/layout%20de%20edi%C3%A7%C3%A3o.jpg?raw=true">
 - Aba JsonSchema. </br>
-        <img src="https://github.com/talesxavier1/Arquivos/blob/dev/JsonSchema/prints/Aba%20JsonSchema.jpg?raw=true">
+        <img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/prints/Aba%20JsonSchema.jpg?raw=true">
 - Seleção de versão. </br>
-        <img src="https://github.com/talesxavier1/Arquivos/blob/dev/JsonSchema/prints/Sele%C3%A7%C3%A3o%20de%20Vers%C3%B5es.jpg?raw=true">
+        <img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/prints/Sele%C3%A7%C3%A3o%20de%20Vers%C3%B5es.jpg?raw=true">
 
 
         
