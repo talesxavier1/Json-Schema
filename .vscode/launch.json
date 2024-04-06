@@ -9,7 +9,7 @@
             "port": 9222,
             "request": "launch",
             "type": "pwa-chrome",
-            "url": "http://localhost:5501",
+            "url": "http://localhost:5502",
             "webRoot": "${workspaceFolder}"
         },
         {
