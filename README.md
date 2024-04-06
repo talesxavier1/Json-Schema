@@ -20,10 +20,14 @@ Como resultado, temos uma interfaca que permite a criação de JsonSchemas com b
 -  [Visual Studio Code 1.82](https://code.visualstudio.com/ "Visual Studio Code")
 -  [DevExtreme](https://js.devexpress.com/jQuery/ "DevExtreme")
 -  [Jquery](https://jquery.com/ "Jquery")
+-  [Draw.io](https://app.diagrams.net/ "Draw.io")
+
 ------------
 <h3>Diagrama:</h3>
-<img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/JsonSchema.png?raw=true">
 
+<img src="https://github.com/talesxavier1/Arquivos/blob/main/JsonSchema/JsonSchema.png?raw=true"/>
+
+### Este diagrama pode ser editado importando o xml [Drawio.xml](https://raw.githubusercontent.com/talesxavier1/Arquivos/main/JsonSchema/JsonSchema.drawio "Drawio.xml") em https://app.diagrams.net/
 ------------
 <h3>Imagens interface final.</h3>
 
