@@ -1808,17 +1808,17 @@ class JsonSchemaBuilder {
 
             if (nodeValue.select_numeric_greater) {
                 if (nodeValue.select_numeric_greater == "maior_que") {
-                    finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
+                    finalObject.exclusiveMinimum = nodeValue.number_numeric_greater;
                 } else {
-                    finalObject.maximum = nodeValue.number_numeric_greater;
+                    finalObject.minimum = nodeValue.number_numeric_greater;
                 }
             }
 
             if (nodeValue.select_numeric_less) {
                 if (nodeValue.select_numeric_less == "menor_que") {
-                    finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+                    finalObject.exclusiveMaximum = nodeValue.number_numeric_less;
                 } else {
-                    finalObject.minimum = nodeValue.number_numeric_less;
+                    finalObject.maximum = nodeValue.number_numeric_less;
                 }
             }
 
@@ -1832,7 +1832,7 @@ class JsonSchemaBuilder {
         },
         "number": (nodeValue) => {
             let finalObject = {
-                "type": ["integer"],
+                "type": ["number"],
                 "description": nodeValue.text_description,
             }
 
@@ -1847,17 +1847,19 @@ class JsonSchemaBuilder {
 
             if (nodeValue.select_numeric_greater) {
                 if (nodeValue.select_numeric_greater == "maior_que") {
-                    finalObject.exclusiveMaximum = nodeValue.number_numeric_greater;
+                    finalObject.exclusiveMinimum = nodeValue.number_numeric_greater;
                 } else {
-                    finalObject.maximum = nodeValue.number_numeric_greater;
+                    finalObject.minimum = nodeValue.number_numeric_greater;
                 }
             }
 
             if (nodeValue.select_numeric_less) {
                 if (nodeValue.select_numeric_less == "menor_que") {
-                    finalObject.exclusiveMinimum = nodeValue.number_numeric_less;
+
+                    finalObject.exclusiveMaximum = nodeValue.number_numeric_less;
                 } else {
-                    finalObject.minimum = nodeValue.number_numeric_less;
+
+                    finalObject.maximum = nodeValue.number_numeric_less;
                 }
             }
 
